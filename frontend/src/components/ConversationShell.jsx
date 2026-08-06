@@ -59,6 +59,15 @@ export const ConversationShell = () => {
         </div>
 
         <div className="flex items-center space-x-2">
+          {/* Phase 6 Finish & Reflect Button */}
+          <button
+            type="button"
+            onClick={() => navigateTo('debrief')}
+            className="px-3.5 py-1.5 bg-accent hover:bg-accent-hover text-white rounded-xl text-xs font-semibold focus:outline-none cursor-pointer btn-press shadow-sm"
+          >
+            📋 Finish &amp; Reflect
+          </button>
+
           {/* Pause & Reset Action */}
           <button
             type="button"

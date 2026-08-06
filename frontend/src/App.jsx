@@ -4,6 +4,7 @@ import { Header } from './components/Header';
 import { HomeScreen } from './components/HomeScreen';
 import { ScenarioSelectionScreen } from './components/ScenarioSelectionScreen';
 import { ConversationShell } from './components/ConversationShell';
+import { SessionDebrief } from './components/SessionDebrief';
 import { ProgressScreen } from './components/ProgressScreen';
 import { AboutScreen } from './components/AboutScreen';
 import { ContactScreen } from './components/ContactScreen';
@@ -24,6 +25,7 @@ const MainContent = () => {
           currentSessionId ? <ConversationShell /> : <ScenarioSelectionScreen />
         )}
         
+        {currentRoute === 'debrief' && <SessionDebrief />}
         {currentRoute === 'progress' && <ProgressScreen />}
         {currentRoute === 'about' && <AboutScreen />}
         {currentRoute === 'contact' && <ContactScreen />}
