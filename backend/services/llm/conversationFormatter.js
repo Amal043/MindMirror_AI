@@ -1,17 +1,26 @@
 /**
  * Conversation Formatter Utility
- * Formats persona & user messages, ordered segments, subtext annotations, and Communication Paths (response options).
+ * Formats persona & user messages, ordered segments, subtext annotations, Communication Paths, conversation_pace, and cached perspective.
  */
 
 /**
- * Formats message into segmented structure with phrase position matching & Phase 4 response_options
- * @param {string} rawText - Full assistant text
- * @param {string} sender - ('persona' | 'user')
- * @param {Array<object>} annotations - Validated annotation objects
- * @param {Array<object>} responseOptions - Phase 4 Communication Paths array
- * @returns {object} Frontend message object with segments and response_options
+ * Formats message into segmented structure
+ * @param {string} rawText 
+ * @param {string} sender 
+ * @param {Array<object>} annotations 
+ * @param {Array<object>} responseOptions 
+ * @param {object} conversationPace 
+ * @param {object} perspective 
+ * @returns {object} Formatted frontend message object
  */
-export function formatMessage(rawText, sender = 'persona', annotations = [], responseOptions = []) {
+export function formatMessage(
+  rawText,
+  sender = 'persona',
+  annotations = [],
+  responseOptions = [],
+  conversationPace = { pace: 'Calm', reasons: ['Initial dialogue'] },
+  perspective = null
+) {
   const cleanText = rawText ? rawText.trim() : '';
 
   if (!cleanText) {
@@ -20,11 +29,12 @@ export function formatMessage(rawText, sender = 'persona', annotations = [], res
       sender,
       timestamp: new Date().toISOString(),
       segments: [{ text: '', annotations: [] }],
-      response_options: sender === 'persona' ? responseOptions : []
+      response_options: sender === 'persona' ? responseOptions : [],
+      conversation_pace: conversationPace,
+      perspective
     };
   }
 
-  // If user message, return simple user message object
   if (sender === 'user') {
     return {
       id: `msg_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
@@ -40,18 +50,18 @@ export function formatMessage(rawText, sender = 'persona', annotations = [], res
     };
   }
 
-  // Handle case where annotations array is empty
   if (!Array.isArray(annotations) || annotations.length === 0) {
     return {
       id: `msg_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`,
       sender,
       timestamp: new Date().toISOString(),
       segments: [{ text: cleanText, annotations: [] }],
-      response_options: responseOptions
+      response_options: responseOptions,
+      conversation_pace: conversationPace,
+      perspective
     };
   }
 
-  // Phrase location and segment splitting algorithm
   const matches = [];
   const lowerText = cleanText.toLowerCase();
 
@@ -75,10 +85,8 @@ export function formatMessage(rawText, sender = 'persona', annotations = [], res
     }
   }
 
-  // Sort matches by starting index
   matches.sort((a, b) => a.start - b.start);
 
-  // Filter overlapping matches
   const nonOverlapping = [];
   let lastEnd = 0;
   for (const match of matches) {
@@ -94,11 +102,12 @@ export function formatMessage(rawText, sender = 'persona', annotations = [], res
       sender,
       timestamp: new Date().toISOString(),
       segments: [{ text: cleanText, annotations: [] }],
-      response_options: responseOptions
+      response_options: responseOptions,
+      conversation_pace: conversationPace,
+      perspective
     };
   }
 
-  // Construct ordered segments array
   const segments = [];
   let currentIdx = 0;
 
@@ -130,15 +139,12 @@ export function formatMessage(rawText, sender = 'persona', annotations = [], res
     sender,
     timestamp: new Date().toISOString(),
     segments,
-    response_options: responseOptions
+    response_options: responseOptions,
+    conversation_pace: conversationPace,
+    perspective
   };
 }
 
-/**
- * Converts snake_case type to readable Title format
- * @param {string} type 
- * @returns {string} Human readable title
- */
 function formatTypeTitle(type) {
   if (!type) return 'Possible Meaning';
   return type

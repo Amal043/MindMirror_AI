@@ -14,7 +14,7 @@ export const SensoryProvider = ({ children }) => {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // Modal state for Pause & De-escalate Breather Toolkit
+  // Modal state for Pause & Reset overlay
   const [isDeescalateOpen, setIsDeescalateOpen] = useState(false);
 
   // Pre-populated realistic session history for Progress dashboard (Mechanics not grades)
@@ -98,6 +98,21 @@ export const SensoryProvider = ({ children }) => {
   };
 
   /**
+   * Restarts the last exchange by marking the latest user & assistant messages with restart metadata
+   */
+  const restartExchange = () => {
+    setMessages(prev => {
+      if (prev.length < 2) return prev;
+      const copy = [...prev];
+      const last = { ...copy[copy.length - 1], status: 'discarded', reason: 'user_restart' };
+      const secondLast = { ...copy[copy.length - 2], status: 'discarded', reason: 'user_restart' };
+      copy[copy.length - 1] = last;
+      copy[copy.length - 2] = secondLast;
+      return copy;
+    });
+  };
+
+  /**
    * Start a new scenario session via Backend API stub
    */
   const startScenario = async (scenarioId, customText = null) => {
@@ -126,7 +141,6 @@ export const SensoryProvider = ({ children }) => {
       setCurrentSessionId(sessionId);
       setActiveScenario({ scenarioId, customText });
 
-      // Fetch full backend session messages (including annotations and segmented structure)
       const fetched = await fetchSessionMessages(sessionId);
 
       if (!fetched) {
@@ -190,7 +204,6 @@ export const SensoryProvider = ({ children }) => {
       ]
     };
 
-    // Optimistically show user message
     setMessages(prev => [...prev, userMessageObj]);
     setIsLoading(true);
 
@@ -208,7 +221,6 @@ export const SensoryProvider = ({ children }) => {
         if (data.persona_message) personaReplyText = data.persona_message;
       }
 
-      // Fetch full backend session messages (which contains segmented text & subtext annotations from backend)
       const fetched = await fetchSessionMessages(currentSessionId);
 
       if (!fetched) {
@@ -226,7 +238,6 @@ export const SensoryProvider = ({ children }) => {
         setMessages(prev => [...prev, personaReplyObj]);
       }
 
-      // Record session progress history (Mechanics not grades)
       const currentExchanges = Math.floor((messages.length + 2) / 2);
       const updatedHistoryItem = {
         id: currentSessionId || `session_${Date.now()}`,
@@ -294,6 +305,7 @@ export const SensoryProvider = ({ children }) => {
         messages,
         startScenario,
         sendMessage,
+        restartExchange,
         resetPracticeSession,
         sessionHistory,
         isLoading,

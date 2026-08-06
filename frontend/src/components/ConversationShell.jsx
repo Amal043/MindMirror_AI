@@ -1,14 +1,35 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSensory } from '../context/SensoryContext';
 import { SegmentedMessage } from './SegmentedMessage';
 import { CommunicationPaths } from './CommunicationPaths';
+import { ConversationPaceBadge } from './ConversationPaceBadge';
+import { PausePanel } from './PausePanel';
+import { PauseSuggestion } from './PauseSuggestion';
 
 export const ConversationShell = () => {
-  const { messages, sendMessage, isLoading, activeScenario, navigateTo, lowStimulation, openDeescalate } = useSensory();
+  const {
+    messages,
+    sendMessage,
+    restartExchange,
+    isLoading,
+    activeScenario,
+    navigateTo,
+    lowStimulation,
+    isDeescalateOpen,
+    openDeescalate,
+    closeDeescalate
+  } = useSensory();
 
-  // Find the last persona message to pass response options to CommunicationPaths
+  const [dismissedSuggestion, setDismissedSuggestion] = useState(false);
+
+  // Find the last persona message to pass response options & pace
   const personaMessages = messages.filter(m => m.sender === 'persona');
   const lastPersonaMessage = personaMessages.length > 0 ? personaMessages[personaMessages.length - 1] : null;
+
+  const currentPaceObj = lastPersonaMessage?.conversation_pace || { pace: 'Calm', reasons: ['Initial dialogue'] };
+  const currentPace = currentPaceObj.pace || 'Calm';
+
+  const isEscalating = currentPace === 'Escalating';
 
   return (
     <div className="max-w-3xl mx-auto flex flex-col min-h-[calc(100vh-100px)] py-2 px-2 sm:px-0">
@@ -20,9 +41,13 @@ export const ConversationShell = () => {
             💬
           </div>
           <div>
-            <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wider block">
-              Rehearsal Room
-            </span>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] font-semibold text-text-muted uppercase tracking-wider block">
+                Rehearsal Room
+              </span>
+              {/* Phase 5 Conversation Pace Badge */}
+              <ConversationPaceBadge paceObj={currentPaceObj} />
+            </div>
             <h1 className="text-sm sm:text-base font-bold text-text-primary">
               {activeScenario?.scenarioId === 'custom' 
                 ? 'Custom Practice Session' 
@@ -34,16 +59,14 @@ export const ConversationShell = () => {
         </div>
 
         <div className="flex items-center space-x-2">
-          {/* MOTION-GATE: Signature breathing pulse on Pause & De-escalate button idle state */}
+          {/* Pause & Reset Action */}
           <button
             type="button"
             onClick={openDeescalate}
-            className={`px-3.5 py-1.5 bg-accent-soft text-text-accent hover:bg-accent hover:text-white border border-accent/30 rounded-xl text-xs font-semibold focus:outline-none focus:ring-2 focus:ring-border-focus cursor-pointer btn-press ${
-              lowStimulation ? 'transition-none' : 'breathing-pulse'
-            }`}
-            aria-label="Pause and De-escalate practice session"
+            className="px-3.5 py-1.5 bg-bg-card text-text-primary hover:bg-bg-hover border border-border rounded-xl text-xs font-semibold focus:outline-none cursor-pointer btn-press"
+            aria-label="Pause and reset practice session"
           >
-            🧘 Pause &amp; De-escalate
+            ⏸️ Pause &amp; Reset
           </button>
 
           <button
@@ -56,6 +79,14 @@ export const ConversationShell = () => {
         </div>
       </div>
 
+      {/* Single-Occurrence Escalation Guidance Banner */}
+      {isEscalating && !dismissedSuggestion && (
+        <PauseSuggestion
+          onOpenPause={openDeescalate}
+          onDismiss={() => setDismissedSuggestion(true)}
+        />
+      )}
+
       {/* Single-Column Chat View Area */}
       <div className="flex-1 glass-card rounded-2xl p-4 sm:p-5 overflow-y-auto mb-3 flex flex-col justify-between space-y-4">
         <div className="space-y-4">
@@ -63,7 +94,7 @@ export const ConversationShell = () => {
             <SegmentedMessage key={msg.id} message={msg} />
           ))}
 
-          {/* MOTION-GATE: Static loading indicator with breathing pulse if motion enabled */}
+          {/* MOTION-GATE: Static loading indicator */}
           {isLoading && (
             <div className={`text-left text-xs font-semibold text-text-muted italic py-2 px-1 ${
               lowStimulation ? 'transition-none' : 'breathing-pulse'
@@ -80,6 +111,13 @@ export const ConversationShell = () => {
           isLoading={isLoading}
         />
       </div>
+
+      {/* Phase 5 Static Pause Screen Modal */}
+      <PausePanel
+        isOpen={isDeescalateOpen}
+        onClose={closeDeescalate}
+        onRestartExchange={restartExchange}
+      />
     </div>
   );
 };

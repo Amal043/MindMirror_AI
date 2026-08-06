@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import { useSensory } from '../context/SensoryContext';
+import { PerspectiveCard } from './PerspectiveCard';
 
 /**
- * SegmentedMessage Component (Phase 3 Interactive Annotations)
- * Renders persona and user messages using ordered segments.
- * Tapping an annotated phrase reveals a hedged inline subtext explanation card.
+ * SegmentedMessage Component (Phase 3 Inline Subtext & Phase 5 Perspective Card)
  */
 export const SegmentedMessage = ({ message }) => {
   const { lowStimulation } = useSensory();
   const isPersona = message.sender === 'persona';
+  const isDiscarded = message.status === 'discarded';
   const segments = message.segments || [{ text: message.text || '', annotations: [] }];
 
-  // Track expanded state for annotations by key: `segIdx-annIdx`
   const [expandedAnnotations, setExpandedAnnotations] = useState({});
 
   const toggleAnnotation = (segIdx) => {
@@ -22,7 +21,7 @@ export const SegmentedMessage = ({ message }) => {
   };
 
   return (
-    <div className={`flex flex-col mb-4 ${isPersona ? 'items-start' : 'items-end'}`}>
+    <div className={`flex flex-col mb-4 ${isPersona ? 'items-start' : 'items-end'} ${isDiscarded ? 'opacity-50' : ''}`}>
       {/* Sender Header */}
       <div className="flex items-center space-x-2 mb-1 px-1 text-xs text-text-muted">
         <span className="font-semibold">
@@ -30,6 +29,11 @@ export const SegmentedMessage = ({ message }) => {
         </span>
         {message.timestamp && (
           <span>• {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+        )}
+        {isDiscarded && (
+          <span className="text-[10px] bg-bg-primary border border-border px-1.5 py-0.5 rounded italic">
+            (Restarted)
+          </span>
         )}
       </div>
 
@@ -99,6 +103,11 @@ export const SegmentedMessage = ({ message }) => {
           })}
         </div>
       </div>
+
+      {/* Phase 5 Perspective Card Toggle (Attached to persona messages) */}
+      {isPersona && message.perspective && (
+        <PerspectiveCard perspective={message.perspective} />
+      )}
     </div>
   );
 };

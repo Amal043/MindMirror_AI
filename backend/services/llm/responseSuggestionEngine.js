@@ -4,15 +4,16 @@ import { generate } from './provider.js';
 import { validateAndSanitizeOutput } from './outputValidator.js';
 import { validateAndSanitizeAnnotations } from './annotationValidator.js';
 import { validateAndSanitizeResponseOptions, createFallbackOptions } from './responseValidator.js';
+import { validatePerspectivePayload, createDefaultPerspective } from './perspectiveEngine.js';
 
 /**
  * Single Structured Pass LLM Engine
- * Generates Persona Reply + Inline Subtext Annotations + Communication Paths in ONE call.
+ * Generates Persona Reply + Inline Subtext Annotations + Communication Paths + Perspective Insights in ONE call.
  * @param {Array<object>} llmMessages 
  * @param {string} scenarioId 
  * @param {string} customText 
  * @param {string} sessionId 
- * @returns {Promise<{ persona_message: string, annotations: Array, response_options: Array }>}
+ * @returns {Promise<{ persona_message: string, annotations: Array, response_options: Array, perspective: object }>}
  */
 export async function generateStructuredPersonaPayload(llmMessages, scenarioId, customText = null, sessionId = 'default') {
   const startTime = Date.now();
@@ -31,6 +32,7 @@ export async function generateStructuredPersonaPayload(llmMessages, scenarioId, 
     let personaMessage = null;
     let annotations = [];
     let responseOptions = [];
+    let perspective = createDefaultPerspective(scenarioId);
 
     if (rawOutput) {
       let cleanJson = rawOutput.trim();
@@ -48,13 +50,12 @@ export async function generateStructuredPersonaPayload(llmMessages, scenarioId, 
       personaMessage = validateAndSanitizeOutput(parsed.assistant_message);
       annotations = validateAndSanitizeAnnotations(JSON.stringify(parsed.annotations || []), personaMessage || '');
       responseOptions = validateAndSanitizeResponseOptions(parsed.response_options || [], scenarioId);
+      perspective = validatePerspectivePayload(parsed.perspective, scenarioId);
     } else if (rawOutput && !rawOutput.startsWith('{')) {
-      // If LLM returned plain text instead of JSON object
       personaMessage = validateAndSanitizeOutput(rawOutput);
       responseOptions = createFallbackOptions(scenarioId);
     }
 
-    // Always guarantee response_options are populated
     if (!responseOptions || responseOptions.length === 0) {
       responseOptions = createFallbackOptions(scenarioId);
     }
@@ -67,7 +68,8 @@ export async function generateStructuredPersonaPayload(llmMessages, scenarioId, 
     return {
       persona_message: personaMessage,
       annotations,
-      response_options: responseOptions
+      response_options: responseOptions,
+      perspective
     };
 
   } catch (error) {
@@ -75,35 +77,30 @@ export async function generateStructuredPersonaPayload(llmMessages, scenarioId, 
     return {
       persona_message: null,
       annotations: [],
-      response_options: createFallbackOptions(scenarioId)
+      response_options: createFallbackOptions(scenarioId),
+      perspective: createDefaultPerspective(scenarioId)
     };
   }
 }
 
-/**
- * Robust regex extractor for partial JSON strings
- */
 function extractPartialJson(jsonStr) {
   const result = {
     assistant_message: null,
     annotations: [],
-    response_options: []
+    response_options: [],
+    perspective: null
   };
 
-  // Extract assistant_message
   const msgMatch = jsonStr.match(/"assistant_message"\s*:\s*"((?:[^"\\]|\\.)*)"/);
   if (msgMatch && msgMatch[1]) {
     result.assistant_message = msgMatch[1].replace(/\\"/g, '"').replace(/\\n/g, ' ');
   }
 
-  // Extract response_options array block if present
   const optionsMatch = jsonStr.match(/"response_options"\s*:\s*(\[\s*\{.*?\}\s*\])/s);
   if (optionsMatch && optionsMatch[1]) {
     try {
       result.response_options = JSON.parse(optionsMatch[1]);
-    } catch (e) {
-      // Ignored
-    }
+    } catch (e) {}
   }
 
   return result;
