@@ -28,7 +28,7 @@ export async function startPersonaSession(scenarioId, customText = null) {
   const systemPrompt = buildSystemPrompt(scenarioId, customText);
   const llmMessages = [{ role: 'system', content: systemPrompt }];
 
-  let { persona_message, annotations, response_options, perspective } = await generateStructuredPersonaPayload(
+  let { persona_message, annotations, response_options, perspective, avatar_expression } = await generateStructuredPersonaPayload(
     llmMessages,
     scenarioId,
     customText,
@@ -42,6 +42,7 @@ export async function startPersonaSession(scenarioId, customText = null) {
     }
     response_options = createFallbackOptions(scenarioId);
     perspective = createDefaultPerspective(scenarioId);
+    avatar_expression = 'empathetic';
   }
 
   const initialHistory = [{ role: 'assistant', content: persona_message }];
@@ -53,7 +54,8 @@ export async function startPersonaSession(scenarioId, customText = null) {
     annotations,
     response_options,
     initialPace,
-    perspective
+    perspective,
+    avatar_expression || 'empathetic'
   );
 
   const sessionObj = {
@@ -98,7 +100,7 @@ export async function sendPersonaMessage(sessionId, userMessage) {
     ...slicedHistory
   ];
 
-  let { persona_message, annotations, response_options, perspective } = await generateStructuredPersonaPayload(
+  let { persona_message, annotations, response_options, perspective, avatar_expression } = await generateStructuredPersonaPayload(
     llmMessages,
     session.scenario_id,
     session.custom_text,
@@ -109,6 +111,7 @@ export async function sendPersonaMessage(sessionId, userMessage) {
     persona_message = DEFAULT_FALLBACK_REPLY;
     response_options = createFallbackOptions(session.scenario_id);
     perspective = createDefaultPerspective(session.scenario_id);
+    avatar_expression = 'calm';
   }
 
   session.history.push({ role: 'assistant', content: persona_message });
@@ -123,7 +126,8 @@ export async function sendPersonaMessage(sessionId, userMessage) {
     annotations,
     response_options,
     paceObj,
-    perspective
+    perspective,
+    avatar_expression || 'empathetic'
   );
 
   session.messages.push(personaSegmentedMsg);

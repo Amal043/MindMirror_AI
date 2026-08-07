@@ -19,7 +19,8 @@ export function formatMessage(
   annotations = [],
   responseOptions = [],
   conversationPace = { pace: 'Calm', reasons: ['Initial dialogue'] },
-  perspective = null
+  perspective = null,
+  avatarExpression = 'empathetic'
 ) {
   const cleanText = rawText ? rawText.trim() : '';
 
@@ -31,7 +32,8 @@ export function formatMessage(
       segments: [{ text: '', annotations: [] }],
       response_options: sender === 'persona' ? responseOptions : [],
       conversation_pace: conversationPace,
-      perspective
+      perspective,
+      avatar_expression: avatarExpression
     };
   }
 
@@ -58,7 +60,8 @@ export function formatMessage(
       segments: [{ text: cleanText, annotations: [] }],
       response_options: responseOptions,
       conversation_pace: conversationPace,
-      perspective
+      perspective,
+      avatar_expression: avatarExpression
     };
   }
 
@@ -141,7 +144,8 @@ export function formatMessage(
     segments,
     response_options: responseOptions,
     conversation_pace: conversationPace,
-    perspective
+    perspective,
+    avatar_expression: avatarExpression
   };
 }
 

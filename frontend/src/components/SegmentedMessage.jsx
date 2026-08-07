@@ -6,10 +6,12 @@ import { PerspectiveCard } from './PerspectiveCard';
  * SegmentedMessage Component (Phase 3 Inline Subtext & Phase 5 Perspective Card)
  */
 export const SegmentedMessage = ({ message }) => {
-  const { lowStimulation } = useSensory();
+  const { lowStimulation, speakText, stopSpeech, isSpeakingTTS } = useSensory();
   const isPersona = message.sender === 'persona';
   const isDiscarded = message.status === 'discarded';
   const segments = message.segments || [{ text: message.text || '', annotations: [] }];
+
+  const fullText = segments.map(s => s.text).join(' ');
 
   const [expandedAnnotations, setExpandedAnnotations] = useState({});
 
@@ -29,6 +31,16 @@ export const SegmentedMessage = ({ message }) => {
         </span>
         {message.timestamp && (
           <span>• {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+        )}
+        {isPersona && (
+          <button
+            type="button"
+            onClick={() => isSpeakingTTS ? stopSpeech() : speakText(fullText)}
+            className="px-2 py-0.5 bg-accent-soft hover:bg-accent/20 text-text-accent font-semibold text-[10px] rounded-full border border-accent/30 cursor-pointer flex items-center gap-1"
+            title="Read message aloud"
+          >
+            <span>{isSpeakingTTS ? '⏹️ Stop' : '🔊 Read Aloud'}</span>
+          </button>
         )}
         {isDiscarded && (
           <span className="text-[10px] bg-bg-primary border border-border px-1.5 py-0.5 rounded italic">

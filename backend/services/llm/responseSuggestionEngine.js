@@ -46,11 +46,16 @@ export async function generateStructuredPersonaPayload(llmMessages, scenarioId, 
       }
     }
 
+    let avatarExpression = 'empathetic';
+
     if (parsed && parsed.assistant_message) {
       personaMessage = validateAndSanitizeOutput(parsed.assistant_message);
       annotations = validateAndSanitizeAnnotations(JSON.stringify(parsed.annotations || []), personaMessage || '');
       responseOptions = validateAndSanitizeResponseOptions(parsed.response_options || [], scenarioId);
       perspective = validatePerspectivePayload(parsed.perspective, scenarioId);
+      if (parsed.avatar_expression && typeof parsed.avatar_expression === 'string') {
+        avatarExpression = parsed.avatar_expression.toLowerCase().trim();
+      }
     } else if (rawOutput && !rawOutput.startsWith('{')) {
       personaMessage = validateAndSanitizeOutput(rawOutput);
       responseOptions = createFallbackOptions(scenarioId);
@@ -62,14 +67,15 @@ export async function generateStructuredPersonaPayload(llmMessages, scenarioId, 
 
     const duration = Date.now() - startTime;
     if (config.nodeEnv !== 'production') {
-      console.log(`[Structured Engine Log] Session: ${sessionId} | Time: ${duration}ms | Options: ${responseOptions.length} | Annotations: ${annotations.length}`);
+      console.log(`[Structured Engine Log] Session: ${sessionId} | Time: ${duration}ms | Options: ${responseOptions.length} | Expression: ${avatarExpression}`);
     }
 
     return {
       persona_message: personaMessage,
       annotations,
       response_options: responseOptions,
-      perspective
+      perspective,
+      avatar_expression: avatarExpression
     };
 
   } catch (error) {

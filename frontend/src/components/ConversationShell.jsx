@@ -5,6 +5,7 @@ import { CommunicationPaths } from './CommunicationPaths';
 import { ConversationPaceBadge } from './ConversationPaceBadge';
 import { PausePanel } from './PausePanel';
 import { PauseSuggestion } from './PauseSuggestion';
+import { MindMirrorAvatar } from './MindMirrorAvatar';
 
 export const ConversationShell = () => {
   const {
@@ -17,7 +18,8 @@ export const ConversationShell = () => {
     lowStimulation,
     isDeescalateOpen,
     openDeescalate,
-    closeDeescalate
+    closeDeescalate,
+    isSpeakingTTS
   } = useSensory();
 
   const [dismissedSuggestion, setDismissedSuggestion] = useState(false);
@@ -96,8 +98,43 @@ export const ConversationShell = () => {
         />
       )}
 
-      {/* Single-Column Chat View Area */}
+      {/* Interactive Avatar Banner & Single-Column Chat View Area */}
       <div className="flex-1 glass-card rounded-2xl p-4 sm:p-5 overflow-y-auto mb-3 flex flex-col justify-between space-y-4">
+        
+        {/* Interactive Companion Avatar Header */}
+        <div className="p-4 bg-bg-primary/80 border border-border rounded-2xl flex flex-col sm:flex-row items-center gap-4 justify-between shadow-sm">
+          <div className="flex items-center space-x-4">
+            <MindMirrorAvatar
+              expression={lastPersonaMessage?.avatar_expression || 'empathetic'}
+              isThinking={isLoading}
+              isSpeaking={isSpeakingTTS}
+              size="md"
+              showBubble={false}
+            />
+            <div>
+              <span className="text-[10px] font-bold text-text-accent uppercase tracking-wider block">
+                Practice Persona Partner
+              </span>
+              <h2 className="text-sm font-bold text-text-primary">
+                {activeScenario?.scenarioId === 'accommodations'
+                  ? 'Professor / Supervisor Persona'
+                  : activeScenario?.scenarioId === 'plan_change'
+                    ? 'Project Lead / Teammate Persona'
+                    : activeScenario?.scenarioId === 'boundary'
+                      ? 'Peer / Coworker Persona'
+                      : 'Custom Rehearsal Persona'}
+              </h2>
+              <p className="text-xs text-text-muted mt-0.5">
+                {isLoading
+                  ? 'Analyzing context & building structured options...'
+                  : isSpeakingTTS
+                    ? 'Reading response aloud...'
+                    : 'Attentive and ready for your response.'}
+              </p>
+            </div>
+          </div>
+        </div>
+
         <div className="space-y-4">
           {messages.map((msg) => (
             <SegmentedMessage key={msg.id} message={msg} />

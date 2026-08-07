@@ -1,8 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSensory } from '../context/SensoryContext';
+import { AmbientSoundWidget } from './AmbientSoundWidget';
 
 export const Header = () => {
-  const { currentRoute, navigateTo, lowStimulation } = useSensory();
+  const {
+    currentRoute,
+    navigateTo,
+    isFocusGuideActive,
+    toggleFocusGuide,
+    openFidget,
+    openDeescalate,
+    toggleLowStimulation,
+    toggleReadingEase,
+    speakText
+  } = useSensory();
+
+  const [isToolbarOpen, setIsToolbarOpen] = useState(false);
 
   const NAV_ITEMS = [
     { id: 'home', label: 'Home' },
@@ -13,76 +26,140 @@ export const Header = () => {
   ];
 
   return (
-    <header className="w-full bg-bg-secondary border-b border-border py-3 px-6 sticky top-0 z-50">
-      <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
+    <header className="w-full bg-[#F4F0E6] border-b border-[#E5E0D3] py-2.5 px-6 sticky top-0 z-50 shadow-sm">
+      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
         
         {/* Brand Logo & Title */}
         <button
           onClick={() => navigateTo('home')}
-          className="flex items-center space-x-3 focus:outline-none focus:ring-2 focus:ring-border-focus rounded-md p-1 btn-press"
+          className="flex items-center space-x-3 focus:outline-none rounded-xl p-1 btn-press cursor-pointer"
           aria-label="MindMirror AI Home"
         >
-          <div 
-            className="w-9 h-9 rounded-lg text-white flex items-center justify-center font-bold text-base shadow-sm"
-            style={{ background: 'var(--accent-gradient)' }}
-          >
-            M
-          </div>
+          <img
+            src="/mindmirror_logo.png"
+            alt="MindMirror AI Logo"
+            className="w-10 h-10 rounded-xl object-cover shadow-sm border border-[#E5E0D3]"
+          />
           <div className="text-left">
-            <span className="text-lg font-bold text-text-primary block leading-none">
+            <span className="text-lg font-bold text-[#1F2937] block leading-none">
               MindMirror AI
             </span>
-            <span className="text-[11px] text-text-muted font-medium block mt-0.5">
+            <span className="text-[11px] text-[#6B7280] font-medium block mt-0.5">
               Communication Practice
             </span>
           </div>
         </button>
 
-        {/* Persistent Top Navigation Bar */}
-        <nav className="flex items-center space-x-1 sm:space-x-2 relative" aria-label="Main Navigation">
-          {NAV_ITEMS.map((item) => {
-            const isActive = currentRoute === item.id;
+        {/* Top Control Bar & Nav Links */}
+        <div className="flex flex-wrap items-center gap-2">
+          
+          {/* Web Audio Ambient Soundscapes Widget (Pastel Purple Pill) */}
+          <div className="shrink-0">
+            <AmbientSoundWidget />
+          </div>
 
-            return (
-              <button
-                key={item.id}
-                onClick={() => navigateTo(item.id)}
-                className={`relative px-3 py-2 text-xs sm:text-sm font-medium rounded-md cursor-pointer transition-colors focus:outline-none focus:ring-2 focus:ring-border-focus ${
-                  isActive 
-                    ? 'text-text-primary font-semibold' 
-                    : 'text-text-secondary hover:text-text-primary hover:bg-bg-hover'
-                }`}
-                aria-current={isActive ? 'page' : undefined}
-              >
-                {item.label}
-
-                {/* MOTION-GATE: Active route underline. Static when data-motion="false", 200ms slide when true */}
-                {isActive && (
-                  <span
-                    className={`absolute bottom-0 left-2 right-2 h-0.5 bg-accent rounded-full nav-indicator ${
-                      lowStimulation ? 'transition-none' : ''
-                    }`}
-                  />
-                )}
-              </button>
-            );
-          })}
-
-          {/* Quick Settings Gear Icon Trigger */}
+          {/* Dyslexia Focus Line Guide (Pastel Blue Pill) */}
           <button
-            onClick={() => navigateTo('settings')}
-            className={`p-2 ml-2 text-text-secondary hover:text-text-primary hover:bg-bg-hover rounded-md border border-border focus:outline-none focus:ring-2 focus:ring-border-focus btn-press ${
-              currentRoute === 'settings' ? 'bg-bg-hover text-text-primary border-accent' : ''
+            type="button"
+            onClick={toggleFocusGuide}
+            className={`px-3.5 py-1.5 rounded-full text-xs font-semibold border transition-all cursor-pointer ${
+              isFocusGuideActive
+                ? 'bg-[#BEE3F8] text-[#1E40AF] border-[#90CDF4] shadow-sm'
+                : 'bg-[#D4EBF8] text-[#1E56A0] border-[#BDE0FE] hover:bg-[#BEE3F8]'
             }`}
-            title="Open Settings"
-            aria-label="Settings"
+            title="Toggle Dyslexia Focus Line Guide"
           >
-            <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
-              <path d="M12 15.5A3.5 3.5 0 0 1 8.5 12A3.5 3.5 0 0 1 12 8.5a3.5 3.5 0 0 1 3.5 3.5a3.5 3.5 0 0 1-3.5 3.5m7.43-2.53c.04-.32.07-.64.07-.97c0-.33-.03-.66-.07-1l2.11-1.63c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.31-.61-.22l-2.49 1c-.52-.39-1.06-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.5.42l-.38 2.65c-.63.25-1.17.59-1.69.98l-2.49-1c-.22-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64L4.57 11c-.04.34-.07.67-.07 1c0 .33.03.65.07.97l-2.11 1.66c-.19.15-.25.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.06.74 1.69.99l.38 2.65c.04.24.25.42.5.42h4c.25 0 .46-.18.5-.42l.38-2.65c.63-.25 1.17-.59 1.69-.99l2.49 1c.22.08.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.66Z"/>
-            </svg>
+            🔍 Line Guide
           </button>
-        </nav>
 
+          {/* Sensory Fidget Bubble Pad (Pastel Peach Pill) */}
+          <button
+            type="button"
+            onClick={openFidget}
+            className="px-3.5 py-1.5 bg-[#FDE4D6] text-[#C2593F] border border-[#FCD5C1] hover:bg-[#FCD5C1] rounded-full text-xs font-semibold transition-all cursor-pointer"
+            title="Open Bubble Pop Fidget Pad"
+          >
+            ✋ Fidget
+          </button>
+
+          {/* Nav Items */}
+          <nav className="flex items-center space-x-1 relative" aria-label="Main Navigation">
+            {NAV_ITEMS.map((item) => {
+              const isActive = currentRoute === item.id;
+
+              return (
+                <button
+                  key={item.id}
+                  onClick={() => navigateTo(item.id)}
+                  className={`px-4 py-1.5 text-xs sm:text-sm font-semibold rounded-xl cursor-pointer transition-all ${
+                    isActive 
+                      ? 'bg-[#D5E8D4] text-[#2C5E2E] border border-[#B8D8B6] shadow-sm' 
+                      : 'text-[#4B5563] hover:text-[#1F2937] hover:bg-[#EAE5D8]'
+                  }`}
+                >
+                  {item.label}
+                </button>
+              );
+            })}
+
+            {/* Accessibility Gear Button */}
+            <button
+              onClick={() => setIsToolbarOpen(prev => !prev)}
+              className={`p-2 ml-1 text-[#4B5563] hover:bg-[#EAE5D8] rounded-xl border border-[#E5E0D3] focus:outline-none cursor-pointer btn-press ${
+                isToolbarOpen ? 'bg-[#D5E8D4] text-[#2C5E2E] border-[#B8D8B6]' : ''
+              }`}
+              title="Toggle Accessibility Toolbar"
+            >
+              ⚙️
+            </button>
+          </nav>
+        </div>
+
+      </div>
+
+      {/* Floating Secondary Accessibility Bar & Popover Bar (Matching Reference Image) */}
+      <div className="max-w-6xl mx-auto flex items-center justify-end gap-2 pt-2 text-xs">
+        <button
+          onClick={() => navigateTo('progress')}
+          className="px-3 py-1 bg-[#FCE4EB] text-[#B83280] border border-[#F9C5D5] hover:bg-[#F9C5D5] rounded-full font-semibold transition-all cursor-pointer flex items-center gap-1"
+        >
+          <span>📖</span> Journal
+        </button>
+
+        <button
+          onClick={() => openDeescalate()}
+          className="px-3 py-1 bg-[#E1F5FE] text-[#0288D1] border border-[#B3E5FC] hover:bg-[#B3E5FC] rounded-full font-semibold transition-all cursor-pointer flex items-center gap-1"
+        >
+          <span>🌸</span> Zen Zone
+        </button>
+
+        {/* Accessibility Toolbar Floating Card */}
+        {isToolbarOpen && (
+          <div className="px-3 py-1.5 bg-[#FFFFFF] border border-[#E5E0D3] rounded-2xl shadow-md flex items-center gap-2 text-xs animate-fadeIn">
+            <span className="font-semibold text-[#6B7280] text-[11px]">Accessibility Toolbar</span>
+            <button
+              onClick={() => speakText("MindMirror AI Accessibility Toolbar Active.")}
+              className="p-1 px-2 bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#1F2937] rounded-lg font-bold border border-[#D1D5DB] cursor-pointer"
+              title="Text-to-Speech Audio Reader"
+            >
+              A🔊
+            </button>
+            <button
+              onClick={toggleLowStimulation}
+              className="p-1 px-2 bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#1F2937] rounded-lg font-bold border border-[#D1D5DB] cursor-pointer"
+              title="High Contrast / Low Stimulation Mode"
+            >
+              ◐
+            </button>
+            <button
+              onClick={toggleReadingEase}
+              className="p-1 px-2 bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#1F2937] rounded-lg font-bold border border-[#D1D5DB] cursor-pointer"
+              title="Reading Ease Typography"
+            >
+              Aa
+            </button>
+          </div>
+        )}
       </div>
     </header>
   );

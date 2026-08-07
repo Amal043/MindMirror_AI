@@ -287,6 +287,76 @@ export const SensoryProvider = ({ children }) => {
     setMessages([]);
   };
 
+  // New Sensory & Accessibility States
+  const [isFocusGuideActive, setIsFocusGuideActive] = useState(false);
+  const [isFidgetOpen, setIsFidgetOpen] = useState(false);
+  const [currentAvatarExpression, setCurrentAvatarExpression] = useState('neutral');
+  const [isSpeakingTTS, setIsSpeakingTTS] = useState(false);
+  const [isDictating, setIsDictating] = useState(false);
+  const [dictationTranscript, setDictationTranscript] = useState('');
+
+  const toggleFocusGuide = () => setIsFocusGuideActive(prev => !prev);
+  const openFidget = () => setIsFidgetOpen(true);
+  const closeFidget = () => setIsFidgetOpen(false);
+
+  /**
+   * Web Speech API - Text-To-Speech (TTS) Read Aloud
+   */
+  const speakText = (text) => {
+    if (!('speechSynthesis' in window)) return;
+    window.speechSynthesis.cancel();
+
+    if (!text) {
+      setIsSpeakingTTS(false);
+      return;
+    }
+
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.rate = 0.95; // Slightly slower, calm pace
+    utterance.pitch = 1.0;
+
+    utterance.onstart = () => setIsSpeakingTTS(true);
+    utterance.onend = () => setIsSpeakingTTS(false);
+    utterance.onerror = () => setIsSpeakingTTS(false);
+
+    window.speechSynthesis.speak(utterance);
+  };
+
+  const stopSpeech = () => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      setIsSpeakingTTS(false);
+    }
+  };
+
+  /**
+   * Web Speech API - Voice Dictation
+   */
+  const startDictation = (onResultCallback) => {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      alert("Speech recognition is not supported in your browser.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = false;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => setIsDictating(true);
+    recognition.onresult = (event) => {
+      const current = event.resultIndex;
+      const transcriptText = event.results[current][0].transcript;
+      setDictationTranscript(transcriptText);
+      if (onResultCallback) onResultCallback(transcriptText);
+    };
+    recognition.onerror = () => setIsDictating(false);
+    recognition.onend = () => setIsDictating(false);
+
+    recognition.start();
+  };
+
   return (
     <SensoryContext.Provider
       value={{
@@ -311,7 +381,20 @@ export const SensoryProvider = ({ children }) => {
         isLoading,
         isDeescalateOpen,
         openDeescalate,
-        closeDeescalate
+        closeDeescalate,
+        isFocusGuideActive,
+        toggleFocusGuide,
+        isFidgetOpen,
+        openFidget,
+        closeFidget,
+        currentAvatarExpression,
+        setCurrentAvatarExpression,
+        speakText,
+        stopSpeech,
+        isSpeakingTTS,
+        startDictation,
+        isDictating,
+        dictationTranscript
       }}
     >
       {children}

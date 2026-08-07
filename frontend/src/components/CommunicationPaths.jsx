@@ -8,7 +8,15 @@ import { analyzeDraftImpact } from '../../../backend/services/llm/impactAnalyzer
  * impact descriptions, customization, and user-triggered "Review Draft" analysis.
  */
 export const CommunicationPaths = ({ lastPersonaMessage, onSendMessage, isLoading }) => {
-  const { lowStimulation } = useSensory();
+  const { lowStimulation, startDictation, isDictating } = useSensory();
+
+  const handleVoiceDictation = () => {
+    startDictation((transcriptText) => {
+      setInputText(transcriptText);
+      setIsCustomMode(true);
+      setIsEdited(true);
+    });
+  };
 
   const responseOptions = (lastPersonaMessage && Array.isArray(lastPersonaMessage.response_options) && lastPersonaMessage.response_options.length > 0)
     ? lastPersonaMessage.response_options
@@ -216,10 +224,26 @@ export const CommunicationPaths = ({ lastPersonaMessage, onSendMessage, isLoadin
             value={inputText}
             aria-label="Message Input"
             onChange={handleInputChange}
-            placeholder={isCustomMode ? "Type your custom message..." : "Select a path above, customize it, or type here..."}
+            placeholder={isDictating ? "Listening... Speak now..." : isCustomMode ? "Type your custom message..." : "Select a path above, customize it, or type here..."}
             disabled={isLoading}
-            className="flex-1 p-3.5 bg-bg-input text-text-primary border border-border rounded-xl text-xs sm:text-sm focus:outline-none focus:border-border-focus focus:ring-1 focus:ring-border-focus disabled:opacity-50 shadow-sm"
+            className={`flex-1 p-3.5 bg-bg-input text-text-primary border border-border rounded-xl text-xs sm:text-sm focus:outline-none focus:border-border-focus focus:ring-1 focus:ring-border-focus disabled:opacity-50 shadow-sm ${
+              isDictating ? 'ring-2 ring-red-500/50 bg-red-500/5' : ''
+            }`}
           />
+
+          {/* Speech-To-Text Voice Dictation Microphone Button */}
+          <button
+            type="button"
+            onClick={handleVoiceDictation}
+            title="Dictate message using voice"
+            className={`px-3 py-3.5 border rounded-xl text-xs font-semibold focus:outline-none cursor-pointer flex items-center gap-1 ${
+              isDictating
+                ? 'bg-red-500/20 text-red-400 border-red-500/50 animate-pulse'
+                : 'bg-bg-card hover:bg-bg-hover text-text-secondary border-border'
+            }`}
+          >
+            <span>{isDictating ? '🎙️ Listening...' : '🎤 Voice'}</span>
+          </button>
 
           {/* User-Triggered "Review Draft" Button */}
           {inputText.trim().length > 3 && (

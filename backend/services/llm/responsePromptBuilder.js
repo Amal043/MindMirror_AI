@@ -5,6 +5,7 @@
  * 2. Inline Subtext Annotations (Phase 3)
  * 3. Communication Paths / Response Options (Phase 4)
  * 4. Perspective Insights (Phase 5)
+ * 5. Avatar Expression (Phase 5+)
  */
 
 export function buildStructuredResponsePrompt(scenarioId, customText = null, userHistory = []) {
@@ -41,6 +42,9 @@ REQUIREMENTS:
      "constraints": ["They may need approval before agreeing."],
      "uncertainties": ["It's possible they still need more information."]
    - NEVER speculate about hidden emotions or diagnoses. Always use hedged language ("They may...", "It's possible...").
+
+5. "avatar_expression":
+   - Select ONE expressiveness keyword for your current persona state: "neutral", "thinking", "empathetic", "reassuring", "thoughtful", or "calm".
 
 JSON OUTPUT FORMAT MANDATORY:
 Output ONLY a raw valid JSON object. No markdown wrappers (\`\`\`json). No surrounding prose.
