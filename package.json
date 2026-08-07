@@ -8,8 +8,7 @@
     "dev:frontend": "vite frontend",
     "dev:backend": "node backend/server.js",
     "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
-    "build": "node -e \"console.log('Backend Build Ready for Render!')\"",
-    "build:frontend": "vite build frontend",
+    "build": "vite build frontend",
     "preview": "vite preview frontend"
   },
   "dependencies": {
