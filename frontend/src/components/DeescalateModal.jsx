@@ -153,7 +153,7 @@ export const DeescalateModal = ({ isOpen, onClose }) => {
       aria-modal="true"
       aria-labelledby="deescalate-title"
     >
-      <div className="bg-bg-card border border-border rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl space-y-6 text-left relative overflow-hidden">
+      <div className="bg-bg-card border border-border rounded-3xl max-w-lg w-full p-4 sm:p-6 lg:p-8 shadow-2xl space-y-5 text-left relative overflow-hidden max-h-[92vh] overflow-y-auto">
         
         {/* Soft Ambient Glow Halo */}
         <div 

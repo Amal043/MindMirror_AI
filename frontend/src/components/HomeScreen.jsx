@@ -86,7 +86,7 @@ export const HomeScreen = () => {
         <div className="shrink-0 flex flex-col items-center gap-5 z-10 max-w-sm">
           
           {/* Warm Companion Oval Background Portal */}
-          <div className="w-80 h-80 sm:w-88 sm:h-88 rounded-full bg-[#F4EFE6] border-2 border-[#EADFCF] shadow-inner flex flex-col items-center justify-center p-4 relative">
+          <div className="w-72 h-72 sm:w-88 sm:h-88 max-w-full rounded-full bg-[#F4EFE6] border-2 border-[#EADFCF] shadow-inner flex flex-col items-center justify-center p-3 sm:p-4 relative">
             
             {/* Speech Bubble (100% Un-obscured!) */}
             <div className="mb-2 max-w-xs p-2.5 bg-white/95 border border-[#E5E0D3] rounded-2xl shadow-sm text-xs text-[#1F2937] text-center z-10">

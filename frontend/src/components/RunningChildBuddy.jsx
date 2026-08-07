@@ -160,7 +160,7 @@ export const RunningChildBuddy = () => {
       ))}
 
       {/* SVG Vector Animated Spiderman Wall-Climbing Companion */}
-      <div className="w-20 h-28 relative">
+      <div className="w-14 h-20 sm:w-20 sm:h-28 relative">
         <svg viewBox="0 0 100 130" className="w-full h-full drop-shadow-md overflow-visible">
           {/* Ground / Wall Shadow */}
           <ellipse cx="50" cy="122" rx="20" ry="4" fill="#000000" opacity="0.12" />

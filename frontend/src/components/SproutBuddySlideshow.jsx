@@ -122,7 +122,7 @@ export const SproutBuddySlideshow = () => {
 
   return (
     <div
-      className="flex flex-col items-center justify-center p-4 bg-white/90 border border-[#E5E0D3] rounded-3xl shadow-sm backdrop-blur-sm relative w-64 sm:w-72 transition-all duration-300 overflow-hidden"
+      className="flex flex-col items-center justify-center p-3 sm:p-4 bg-white/90 border border-[#E5E0D3] rounded-3xl shadow-sm backdrop-blur-sm relative w-64 sm:w-72 max-w-full transition-all duration-300 overflow-hidden"
     >
       {/* Art Display Frame (Zero Count Numbers, Zero Manual Toggles) */}
       <div
