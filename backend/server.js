@@ -54,6 +54,49 @@ app.post('/api/message', async (req, res) => {
  * GET /api/session/:session_id
  * Response: { "session_id": string, "messages": [...] }
  */
+/**
+ * POST /api/pebblue/chat
+ * Request:  { "user_message": string, "history": Array }
+ * Response: { "reply": string }
+ */
+app.post('/api/pebblue/chat', async (req, res) => {
+  try {
+    const { user_message, history } = req.body;
+    const systemInstruction = 
+      "You are Pebblue, a warm, soothing, and extremely gentle cartoon sloth companion for neurodivergent individuals. " +
+      "Your purpose is to provide a calm, safe, and validating space. " +
+      "Respond in a very supportive, cozy, and non-judgmental tone. " +
+      "Keep your responses short, simple, and comforting (1 to 3 sentences max). " +
+      "Focus on emotional validation, grounding exercises (like suggesting a slow breath or naming something in the room), " +
+      "or simply offering to sit together. Never break character. Never mention you are an AI assistant.";
+
+    const messages = [
+      { role: 'system', content: systemInstruction }
+    ];
+
+    if (Array.isArray(history)) {
+      history.forEach(msg => {
+        messages.push({
+          role: msg.sender === 'user' ? 'user' : 'assistant',
+          content: msg.text
+        });
+      });
+    }
+
+    if (user_message) {
+      messages.push({ role: 'user', content: user_message });
+    }
+
+    const { generate } = await import('./services/llm/provider.js');
+    const aiReply = await generate(messages, 'pebblue_session');
+    
+    return res.json({ reply: aiReply });
+  } catch (error) {
+    console.error('[API Error] /api/pebblue/chat:', error);
+    return res.json({ reply: null });
+  }
+});
+
 app.get('/api/session/:session_id', (req, res) => {
   try {
     const { session_id } = req.params;
