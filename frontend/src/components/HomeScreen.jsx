@@ -1,6 +1,7 @@
 import React from 'react';
 import { useSensory } from '../context/SensoryContext';
 import { MindMirrorAvatar } from './MindMirrorAvatar';
+import { SproutBuddySlideshow } from './SproutBuddySlideshow';
 
 export const HomeScreen = () => {
   const { navigateTo, lowStimulation, openDeescalate } = useSensory();
@@ -76,16 +77,9 @@ export const HomeScreen = () => {
           </div>
         </div>
 
-        {/* Hero Middle Column: Cute Sprout Buddy Spotlight Card */}
-        <div className="shrink-0 z-10 flex flex-col items-center justify-center p-4 bg-white/70 border border-[#E5E0D3] rounded-3xl shadow-sm backdrop-blur-sm">
-          <img
-            src="/cute_sprout_buddy.png"
-            alt="Cute Sprout Buddy"
-            className="w-40 h-40 sm:w-48 sm:h-48 object-contain mix-blend-multiply drop-shadow-md"
-          />
-          <span className="mt-2 text-[11px] font-bold text-[#5C5B99] px-3.5 py-1 bg-[#E8DFF5] rounded-full border border-[#DDD6FE]">
-            🌱 Sprout Practice Buddy
-          </span>
+        {/* Hero Middle Column: 15-Picture Soothing Sprout Buddy Slideshow */}
+        <div className="shrink-0 z-10">
+          <SproutBuddySlideshow />
         </div>
 
         {/* Hero Right Column: Companion Circle Portal & Daily Reflection Progress Card (Stacked Cleanly - Zero Cutoff!) */}
