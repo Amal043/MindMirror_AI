@@ -107,7 +107,18 @@ export const SensoryProvider = ({ children }) => {
   const openDeescalate = () => setIsDeescalateOpen(true);
   const closeDeescalate = () => setIsDeescalateOpen(false);
 
+  const checkAuthProtection = () => {
+    if (!user) {
+      setIsAuthModalOpen(true);
+      return false;
+    }
+    return true;
+  };
+
   const navigateTo = (route) => {
+    if (route === 'practice' || route === 'progress') {
+      if (!checkAuthProtection()) return;
+    }
     setCurrentRoute(route);
     window.scrollTo(0, 0);
   };
@@ -150,6 +161,7 @@ export const SensoryProvider = ({ children }) => {
    * Start a new scenario session via Backend API stub
    */
   const startScenario = async (scenarioId, customText = null) => {
+    if (!checkAuthProtection()) return;
     setIsLoading(true);
 
     const defaultStarterText = scenarioId === 'custom' && customText 
@@ -330,7 +342,10 @@ export const SensoryProvider = ({ children }) => {
   const [dictationTranscript, setDictationTranscript] = useState('');
 
   const toggleFocusGuide = () => setIsFocusGuideActive(prev => !prev);
-  const openFidget = () => setIsFidgetOpen(true);
+  const openFidget = () => {
+    if (!checkAuthProtection()) return;
+    setIsFidgetOpen(true);
+  };
   const closeFidget = () => setIsFidgetOpen(false);
 
   /**
