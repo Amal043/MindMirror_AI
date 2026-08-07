@@ -1,4 +1,6 @@
-import { config } from '../../config.js';
+import { config, geminiKeysPool } from '../../config.js';
+
+let activeKeyIndex = 0;
 
 /**
  * Single provider-agnostic LLM Generator function
@@ -103,31 +105,43 @@ async function executeSingleLLMCall({ messages, apiKey, modelName, timeoutMs }) 
         }
       };
 
-      // Model candidate sequence to guarantee active endpoints
+      // Multi-Key Auto-Rotation & Failover Pool
       const candidateModels = [modelName, 'gemini-flash-latest', 'gemini-3.6-flash', 'gemini-2.0-flash'];
       let response = null;
       let lastErrText = '';
 
-      for (const mName of candidateModels) {
-        const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${mName}:generateContent?key=${apiKey}`;
-        
-        try {
-          const res = await fetch(geminiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(requestBody),
-            signal: controller.signal
-          });
+      const keyPool = geminiKeysPool && geminiKeysPool.length > 0 ? geminiKeysPool : [apiKey];
 
-          if (res.ok) {
-            response = res;
-            break;
-          } else {
-            lastErrText = await res.text();
+      for (let kIdx = 0; kIdx < keyPool.length; kIdx++) {
+        const currentKey = keyPool[(activeKeyIndex + kIdx) % keyPool.length];
+        
+        for (const mName of candidateModels) {
+          const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${mName}:generateContent?key=${currentKey}`;
+          
+          try {
+            const res = await fetch(geminiUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(requestBody),
+              signal: controller.signal
+            });
+
+            if (res.ok) {
+              response = res;
+              activeKeyIndex = (activeKeyIndex + kIdx) % keyPool.length;
+              break;
+            } else {
+              lastErrText = await res.text();
+              if (res.status === 429 || res.status === 403) {
+                console.warn(`[Gemini API Key Failover] Key #${(activeKeyIndex + kIdx) % keyPool.length + 1} quota/auth issue (HTTP ${res.status}). Rotating to next API key...`);
+              }
+            }
+          } catch (e) {
+            lastErrText = e.message;
           }
-        } catch (e) {
-          lastErrText = e.message;
         }
+
+        if (response && response.ok) break;
       }
 
       if (!response || !response.ok) {

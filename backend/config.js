@@ -17,19 +17,18 @@ for (const envPath of possiblePaths) {
   }
 }
 
-/**
- * Centralized Backend Configuration
- */
+const rawKeys = process.env.GEMINI_API_KEYS || process.env.GEMINI_API_KEY || '';
+export const geminiKeysPool = rawKeys
+  .split(',')
+  .map(k => k.trim())
+  .filter(k => k && k !== 'your_gemini_api_key_here');
+
 export const config = {
   port: process.env.PORT || 3001,
-  llmApiKey: (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here') 
-    ? process.env.GEMINI_API_KEY 
-    : (process.env.LLM_API_KEY && process.env.LLM_API_KEY !== 'your_gemini_api_key_here')
-      ? process.env.LLM_API_KEY 
-      : process.env.OPENAI_API_KEY || '',
+  llmApiKey: geminiKeysPool[0] || '',
   llmModel: process.env.LLM_MODEL || 'gemini-flash-latest',
-  timeoutMs: Number(process.env.TIMEOUT_MS) || 15000, // 15 seconds request timeout
-  maxHistoryMessages: Number(process.env.MAX_HISTORY) || 20, // 10 exchanges = 20 messages
+  timeoutMs: Number(process.env.TIMEOUT_MS) || 15000,
+  maxHistoryMessages: Number(process.env.MAX_HISTORY) || 20,
   maxRetries: 1,
   nodeEnv: process.env.NODE_ENV || 'development'
 };

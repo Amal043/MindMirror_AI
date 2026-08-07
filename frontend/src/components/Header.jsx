@@ -12,7 +12,9 @@ export const Header = () => {
     openDeescalate,
     toggleLowStimulation,
     toggleReadingEase,
-    speakText
+    speakText,
+    voiceGender,
+    toggleVoiceGender
   } = useSensory();
 
   const [isToolbarOpen, setIsToolbarOpen] = useState(false);
@@ -26,7 +28,7 @@ export const Header = () => {
   ];
 
   return (
-    <header className="w-full bg-[#F4F0E6] border-b border-[#E5E0D3] py-2.5 px-6 sticky top-0 z-50 shadow-sm">
+    <header className="w-full bg-bg-secondary border-b border-border py-2.5 px-6 sticky top-0 z-50 shadow-sm">
       <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-3">
         
         {/* Brand Logo & Title */}
@@ -145,11 +147,15 @@ export const Header = () => {
               A🔊
             </button>
             <button
-              onClick={toggleLowStimulation}
-              className="p-1 px-2 bg-[#F3F4F6] hover:bg-[#E5E7EB] text-[#1F2937] rounded-lg font-bold border border-[#D1D5DB] cursor-pointer"
-              title="High Contrast / Low Stimulation Mode"
+              onClick={() => {
+                toggleVoiceGender();
+                const nextVoice = voiceGender === 'female' ? 'male' : 'female';
+                speakText(nextVoice === 'female' ? "Switched to Female Voice." : "Switched to Male Voice.", nextVoice);
+              }}
+              className="p-1 px-2.5 bg-[#EEF2FF] hover:bg-[#E0E7FF] text-[#5C5B99] rounded-lg font-bold border border-[#C7D2FE] cursor-pointer flex items-center gap-1 shadow-sm"
+              title="Toggle Text-to-Speech Voice (Female 👩 / Male 👨)"
             >
-              ◐
+              <span>{voiceGender === 'female' ? '👩 Female' : '👨 Male'}</span>
             </button>
             <button
               onClick={toggleReadingEase}

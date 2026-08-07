@@ -7,6 +7,9 @@ export const SensoryProvider = ({ children }) => {
   const [readingEase, setReadingEase] = useState(false);
   const [activePalette, setActivePalette] = useState('slate');
   const [fontSizePx, setFontSizePx] = useState(16);
+  const [voiceGender, setVoiceGender] = useState('female'); // 'female' or 'male'
+
+  const toggleVoiceGender = () => setVoiceGender(prev => prev === 'female' ? 'male' : 'female');
 
   const [currentRoute, setCurrentRoute] = useState('home');
   const [currentSessionId, setCurrentSessionId] = useState(null);
@@ -48,15 +51,9 @@ export const SensoryProvider = ({ children }) => {
     root.setAttribute('data-palette', activePalette);
     root.style.setProperty('--base-font-size', `${fontSizePx}px`);
 
-    if (lowStimulation) {
-      root.setAttribute('data-low-stim', 'true');
-      root.setAttribute('data-motion', 'false');
-      root.style.setProperty('--motion-enabled', 'false');
-    } else {
-      root.removeAttribute('data-low-stim');
-      root.setAttribute('data-motion', 'true');
-      root.style.setProperty('--motion-enabled', 'true');
-    }
+    root.removeAttribute('data-low-stim');
+    root.setAttribute('data-motion', 'true');
+    root.style.setProperty('--motion-enabled', 'true');
 
     if (readingEase) {
       root.setAttribute('data-reading-ease', 'true');
@@ -300,9 +297,9 @@ export const SensoryProvider = ({ children }) => {
   const closeFidget = () => setIsFidgetOpen(false);
 
   /**
-   * Web Speech API - Text-To-Speech (TTS) Read Aloud
+   * Web Speech API - Text-To-Speech (TTS) Read Aloud with Female & Male Voice Selection
    */
-  const speakText = (text) => {
+  const speakText = (text, requestedGender = voiceGender) => {
     if (!('speechSynthesis' in window)) return;
     window.speechSynthesis.cancel();
 
@@ -312,8 +309,30 @@ export const SensoryProvider = ({ children }) => {
     }
 
     const utterance = new SpeechSynthesisUtterance(text);
-    utterance.rate = 0.95; // Slightly slower, calm pace
-    utterance.pitch = 1.0;
+    const voices = window.speechSynthesis.getVoices();
+
+    if (voices && voices.length > 0) {
+      if (requestedGender === 'female') {
+        const femaleVoice = voices.find(v => 
+          /female|zira|samantha|victoria|karen|eva|google us english|en-us-x-sfg/i.test(v.name)
+        ) || voices.find(v => v.lang.startsWith('en') && !/male|david|alex|george|guy/i.test(v.name));
+        
+        if (femaleVoice) utterance.voice = femaleVoice;
+        utterance.pitch = 1.15; // Soft natural female pitch
+        utterance.rate = 0.95;
+      } else {
+        const maleVoice = voices.find(v => 
+          /male|david|alex|george|natural|guy|mark|google uk english male/i.test(v.name)
+        ) || voices.find(v => /david|alex|george/i.test(v.name));
+
+        if (maleVoice) utterance.voice = maleVoice;
+        utterance.pitch = 0.85; // Natural male pitch
+        utterance.rate = 0.95;
+      }
+    } else {
+      utterance.pitch = requestedGender === 'female' ? 1.15 : 0.85;
+      utterance.rate = 0.95;
+    }
 
     utterance.onstart = () => setIsSpeakingTTS(true);
     utterance.onend = () => setIsSpeakingTTS(false);
@@ -392,6 +411,9 @@ export const SensoryProvider = ({ children }) => {
         speakText,
         stopSpeech,
         isSpeakingTTS,
+        voiceGender,
+        setVoiceGender,
+        toggleVoiceGender,
         startDictation,
         isDictating,
         dictationTranscript
