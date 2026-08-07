@@ -104,7 +104,7 @@ async function executeSingleLLMCall({ messages, apiKey, modelName, timeoutMs }) 
       };
 
       // Model candidate sequence to guarantee active endpoints
-      const candidateModels = [modelName, 'gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-flash-latest'];
+      const candidateModels = [modelName, 'gemini-flash-latest', 'gemini-3.6-flash', 'gemini-2.0-flash'];
       let response = null;
       let lastErrText = '';
 

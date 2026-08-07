@@ -22,8 +22,12 @@ for (const envPath of possiblePaths) {
  */
 export const config = {
   port: process.env.PORT || 3001,
-  llmApiKey: process.env.LLM_API_KEY || process.env.GEMINI_API_KEY || process.env.OPENAI_API_KEY || '',
-  llmModel: process.env.LLM_MODEL || 'gemini-2.5-flash',
+  llmApiKey: (process.env.GEMINI_API_KEY && process.env.GEMINI_API_KEY !== 'your_gemini_api_key_here') 
+    ? process.env.GEMINI_API_KEY 
+    : (process.env.LLM_API_KEY && process.env.LLM_API_KEY !== 'your_gemini_api_key_here')
+      ? process.env.LLM_API_KEY 
+      : process.env.OPENAI_API_KEY || '',
+  llmModel: process.env.LLM_MODEL || 'gemini-flash-latest',
   timeoutMs: Number(process.env.TIMEOUT_MS) || 15000, // 15 seconds request timeout
   maxHistoryMessages: Number(process.env.MAX_HISTORY) || 20, // 10 exchanges = 20 messages
   maxRetries: 1,
