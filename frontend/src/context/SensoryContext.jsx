@@ -417,6 +417,23 @@ export const SensoryProvider = ({ children }) => {
   };
   const closeFidget = () => setIsFidgetOpen(false);
 
+  // Pre-fetch Web Speech API voices
+  const [availableVoices, setAvailableVoices] = useState([]);
+
+  useEffect(() => {
+    if (!('speechSynthesis' in window)) return;
+    
+    const updateVoices = () => {
+      const vList = window.speechSynthesis.getVoices();
+      if (vList && vList.length > 0) {
+        setAvailableVoices(vList);
+      }
+    };
+
+    updateVoices();
+    window.speechSynthesis.onvoiceschanged = updateVoices;
+  }, []);
+
   /**
    * Web Speech API - Text-To-Speech (TTS) Read Aloud with Female & Male Voice Selection
    */
@@ -430,29 +447,24 @@ export const SensoryProvider = ({ children }) => {
     }
 
     const utterance = new SpeechSynthesisUtterance(text);
-    const voices = window.speechSynthesis.getVoices();
+    const voices = availableVoices.length > 0 ? availableVoices : window.speechSynthesis.getVoices();
 
-    if (voices && voices.length > 0) {
-      if (requestedGender === 'female') {
-        const femaleVoice = voices.find(v => 
-          /female|zira|samantha|victoria|karen|eva|google us english|en-us-x-sfg/i.test(v.name)
-        ) || voices.find(v => v.lang.startsWith('en') && !/male|david|alex|george|guy/i.test(v.name));
-        
-        if (femaleVoice) utterance.voice = femaleVoice;
-        utterance.pitch = 1.15; // Soft natural female pitch
-        utterance.rate = 0.95;
-      } else {
-        const maleVoice = voices.find(v => 
-          /male|david|alex|george|natural|guy|mark|google uk english male/i.test(v.name)
-        ) || voices.find(v => /david|alex|george/i.test(v.name));
-
-        if (maleVoice) utterance.voice = maleVoice;
-        utterance.pitch = 0.85; // Natural male pitch
-        utterance.rate = 0.95;
-      }
+    if (requestedGender === 'female') {
+      const femaleVoice = voices.find(v => 
+        /female|zira|samantha|victoria|karen|eva|google us english|en-us-x-sfg|jenny|aria|helena|sonia/i.test(v.name)
+      ) || voices.find(v => v.lang.startsWith('en') && !/male|david|alex|george|guy|stefan|mark|eric/i.test(v.name));
+      
+      if (femaleVoice) utterance.voice = femaleVoice;
+      utterance.pitch = 1.35; // Distinct higher female pitch
+      utterance.rate = 0.92;
     } else {
-      utterance.pitch = requestedGender === 'female' ? 1.15 : 0.85;
-      utterance.rate = 0.95;
+      const maleVoice = voices.find(v => 
+        /male|david|alex|george|natural|guy|mark|stefan|eric|google uk english male/i.test(v.name)
+      ) || voices.find(v => /david|alex|george|mark|male/i.test(v.name));
+
+      if (maleVoice) utterance.voice = maleVoice;
+      utterance.pitch = 0.65; // Distinct lower deep male pitch
+      utterance.rate = 0.92;
     }
 
     utterance.onstart = () => setIsSpeakingTTS(true);

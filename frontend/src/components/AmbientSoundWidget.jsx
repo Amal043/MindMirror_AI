@@ -57,7 +57,7 @@ export const AmbientSoundWidget = () => {
       </button>
 
       {isOpen && (
-        <div className="absolute right-0 mt-2 w-64 p-4 bg-bg-card border border-border rounded-2xl shadow-2xl z-50 text-xs space-y-3 animate-fadeIn">
+        <div className="absolute left-1/2 -translate-x-1/2 sm:left-auto sm:right-0 sm:translate-x-0 mt-2 w-64 max-w-[calc(100vw-32px)] p-4 bg-white border border-[#E5E0D3] rounded-2xl shadow-2xl z-50 text-xs space-y-3 animate-fadeIn">
           <div className="flex items-center justify-between border-b border-border/50 pb-2">
             <span className="font-bold text-text-primary uppercase tracking-wider text-[10px] flex items-center gap-1">
               <span>🎧</span> Soothing Soundscapes
