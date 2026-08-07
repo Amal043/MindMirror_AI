@@ -195,7 +195,7 @@ export const AuthModal = ({ isOpen, onClose }) => {
             {isLoading ? (
               <>
                 <span className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span>
-                <span>Connecting to MongoDB Atlas...</span>
+                <span>Connecting to you, our family...</span>
               </>
             ) : (
               <span>{isLoginTab ? 'Log In to MindMirror' : 'Create Free Account'} &rarr;</span>
@@ -205,7 +205,7 @@ export const AuthModal = ({ isOpen, onClose }) => {
 
         {/* Footer info */}
         <p className="text-[11px] text-[#6B7280] text-center pt-2">
-          🔒 Secure authentication stored on MongoDB Atlas Cloud.
+          🌸 Welcome to our caring, sensory-friendly family.
         </p>
 
       </div>
