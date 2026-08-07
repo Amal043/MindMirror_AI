@@ -13,6 +13,8 @@ import { DeescalateModal } from './components/DeescalateModal';
 import { SensoryFidgetWidget } from './components/SensoryFidgetWidget';
 import { FocusReadingGuide } from './components/FocusReadingGuide';
 import { RunningChildBuddy } from './components/RunningChildBuddy';
+import { TalkWithPebblue } from './components/TalkWithPebblue';
+
 
 const MainContent = () => {
   const {
@@ -48,6 +50,10 @@ const MainContent = () => {
 
       {/* Interactive Running Child Companion Buddy */}
       <RunningChildBuddy />
+
+      {/* Talk with Pebblue Companion Bot */}
+      <TalkWithPebblue />
+
 
       {/* Global De-escalation Breather Toolkit Modal */}
       <DeescalateModal isOpen={isDeescalateOpen} onClose={closeDeescalate} />
