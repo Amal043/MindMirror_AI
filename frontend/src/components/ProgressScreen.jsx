@@ -2,11 +2,11 @@ import React from 'react';
 import { useSensory } from '../context/SensoryContext';
 
 export const ProgressScreen = () => {
-  const { sessionHistory, navigateTo, lowStimulation } = useSensory();
+  const { sessionHistory, userStats, user, navigateTo, lowStimulation } = useSensory();
 
-  const totalSessions = sessionHistory.length;
-  const totalExchanges = sessionHistory.reduce((acc, curr) => acc + (curr.exchanges || 0), 0);
-  const totalMinutes = sessionHistory.reduce((acc, curr) => acc + (curr.durationMin || 0), 0);
+  const totalSessions = userStats?.completedSessionsCount || sessionHistory.length;
+  const totalExchanges = userStats?.totalMessagesSent || sessionHistory.reduce((acc, curr) => acc + (curr.exchanges || 0), 0);
+  const totalMinutes = userStats?.totalTimeSpentMinutes || sessionHistory.reduce((acc, curr) => acc + (curr.durationMin || 0), 0);
 
   return (
     <main className="max-w-5xl mx-auto px-6 py-10 space-y-10">
@@ -22,13 +22,13 @@ export const ProgressScreen = () => {
 
         <div>
           <div className="inline-block px-3 py-1 bg-accent-soft text-text-accent text-xs font-semibold rounded-full mb-3 border border-accent/20">
-            🌱 Mechanics, Not Grades
+            {user ? `🌸 ${user.name}'s Personal Journal` : '🌱 Mechanics, Not Grades'}
           </div>
           <h1 className="text-2xl sm:text-3xl font-bold text-text-primary mb-2">
             Practice Dashboard &amp; History
           </h1>
           <p className="text-sm text-text-secondary max-w-2xl leading-relaxed">
-            Track your completed practice sessions and scenario history. MindMirror AI measures your engagement and time spent—never letter grades or evaluation scores.
+            Real-time practice metrics saved to MongoDB Atlas Cloud. MindMirror AI measures your engagement and time spent—never letter grades or evaluation scores.
           </p>
         </div>
 

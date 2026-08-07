@@ -1,5 +1,15 @@
 import mongoose from 'mongoose';
 
+const sessionLogSchema = new mongoose.Schema({
+  id: String,
+  scenarioId: String,
+  title: String,
+  date: String,
+  exchanges: { type: Number, default: 1 },
+  durationMin: { type: Number, default: 1 },
+  notes: String
+}, { timestamps: true });
+
 const userSchema = new mongoose.Schema(
   {
     name: {
@@ -22,6 +32,19 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: '🌸'
     },
+    totalMessagesSent: {
+      type: Number,
+      default: 0
+    },
+    totalTimeSpentMinutes: {
+      type: Number,
+      default: 0
+    },
+    completedSessionsCount: {
+      type: Number,
+      default: 0
+    },
+    sessionLogs: [sessionLogSchema],
     preferences: {
       soundVolume: { type: Number, default: 70 },
       readingEase: { type: Boolean, default: false }

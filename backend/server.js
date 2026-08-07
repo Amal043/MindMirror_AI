@@ -5,6 +5,7 @@ import { startPersonaSession, sendPersonaMessage, getSession } from './services/
 
 import mongoose from 'mongoose';
 import authRoutes from './routes/auth.js';
+import progressRoutes from './routes/progress.js';
 
 dotenv.config();
 
@@ -21,8 +22,9 @@ mongoose.connect(MONGODB_URI)
   .then(() => console.log('[MongoDB Atlas] Connected successfully to MongoDB Cloud Database! 🍃'))
   .catch((err) => console.error('[MongoDB Atlas Error] Connection failed:', err.message));
 
-// Mount Authentication Routes
+// Mount Authentication & Progress Routes
 app.use('/api/auth', authRoutes);
+app.use('/api/progress', progressRoutes);
 
 /**
  * POST /api/scenario/start

@@ -17,11 +17,20 @@ export const SensoryProvider = ({ children }) => {
   const openAuthModal = () => setIsAuthModalOpen(true);
   const closeAuthModal = () => setIsAuthModalOpen(false);
 
+  // Real User Progress Metrics (MongoDB Atlas Cloud Integration)
+  const [userStats, setUserStats] = useState({
+    totalMessagesSent: 0,
+    totalTimeSpentMinutes: 0,
+    completedSessionsCount: 0,
+    sessionLogs: []
+  });
+
   const loginUser = (userData, authToken) => {
     setUser(userData);
     setToken(authToken);
     if (authToken) {
       localStorage.setItem('mindmirror_token', authToken);
+      fetchUserStats(authToken);
     }
   };
 
@@ -29,9 +38,63 @@ export const SensoryProvider = ({ children }) => {
     setUser(null);
     setToken(null);
     localStorage.removeItem('mindmirror_token');
+    setUserStats({
+      totalMessagesSent: 0,
+      totalTimeSpentMinutes: 0,
+      completedSessionsCount: 0,
+      sessionLogs: []
+    });
+    setSessionHistory([]);
   };
 
-  // Auto-verify token with backend on mount
+  const fetchUserStats = async (authToken = token) => {
+    const t = authToken || localStorage.getItem('mindmirror_token');
+    if (!t) return;
+    try {
+      const res = await fetch('/api/progress/user-stats', {
+        headers: { Authorization: `Bearer ${t}` }
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.stats) {
+          setUserStats(data.stats);
+          if (data.stats.sessionLogs) {
+            setSessionHistory(data.stats.sessionLogs);
+          }
+        }
+      }
+    } catch (err) {
+      console.warn("Failed to fetch user progress stats from MongoDB Atlas:", err);
+    }
+  };
+
+  const trackSessionProgress = async (scenarioData) => {
+    const t = token || localStorage.getItem('mindmirror_token');
+    if (!t) return;
+    try {
+      const res = await fetch('/api/progress/track-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${t}`
+        },
+        body: JSON.stringify(scenarioData)
+      });
+      if (res.ok) {
+        const data = await res.json();
+        if (data.stats) {
+          setUserStats(data.stats);
+          if (data.stats.sessionLogs) {
+            setSessionHistory(data.stats.sessionLogs);
+          }
+        }
+      }
+    } catch (err) {
+      console.warn("Failed to track progress in MongoDB Atlas:", err);
+    }
+  };
+
+  // Auto-verify token & load user stats from MongoDB Atlas on mount
   useEffect(() => {
     const savedToken = localStorage.getItem('mindmirror_token');
     if (savedToken) {
@@ -40,7 +103,10 @@ export const SensoryProvider = ({ children }) => {
       })
         .then(res => res.json())
         .then(data => {
-          if (data.user) setUser(data.user);
+          if (data.user) {
+            setUser(data.user);
+            fetchUserStats(savedToken);
+          }
         })
         .catch(err => console.warn('Auth token check failed:', err));
     }
@@ -308,6 +374,9 @@ export const SensoryProvider = ({ children }) => {
         return [updatedHistoryItem, ...prev];
       });
 
+      // Persist real progress data directly to MongoDB Atlas Cloud
+      trackSessionProgress(updatedHistoryItem);
+
     } catch (err) {
       console.warn("Backend API message error, using client fallback reply:", err);
       const fallbackReplyObj = {
@@ -474,7 +543,9 @@ export const SensoryProvider = ({ children }) => {
         openAuthModal,
         closeAuthModal,
         loginUser,
-        logoutUser
+        logoutUser,
+        userStats,
+        fetchUserStats
       }}
     >
       {children}
