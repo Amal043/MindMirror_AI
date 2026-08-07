@@ -2,317 +2,357 @@ import React, { useState, useEffect } from 'react';
 import { useSensory } from '../context/SensoryContext';
 
 /**
- * 15 Cute Sprout Buddy Artworks & Themes Data
+ * 15 Ultra-Cute Doraemon/Chibi Style Round Cartoon Mascot Expressions
  */
-const SPROUT_SLIDES = [
+const SPROUT_EXPRESSIONS = [
   {
     id: 1,
-    title: 'Cozy Sprout',
-    icon: '🌱',
-    color: '#91D4C3',
-    bg: '#EEF7F2',
-    image: '/cute_sprout_buddy.png', // Main generated image
-    svgContent: null
+    title: 'Happy Cheerful Sprout',
+    icon: '😊',
+    bg: '#E8F8F5',
+    eyeType: 'sparkle',
+    mouthType: 'bigSmile',
+    prop: '🌱'
   },
   {
     id: 2,
-    title: 'Cherry Blossom Sprout',
-    icon: '🌸',
-    color: '#F9A8D4',
+    title: 'Giggling Winking Sprout',
+    icon: '😜',
     bg: '#FDF2F8',
-    image: null,
-    svgTheme: 'flower'
+    eyeType: 'wink',
+    mouthType: 'tongue',
+    prop: '✨'
   },
   {
     id: 3,
-    title: 'Cozy Reading Sprout',
-    icon: '📖',
-    color: '#A7F3D0',
-    bg: '#ECFDF5',
-    image: null,
-    svgTheme: 'reading'
+    title: 'Angel Sleepy Sprout',
+    icon: '😴',
+    bg: '#EEF2FF',
+    eyeType: 'sleepy',
+    mouthType: 'smallSmile',
+    prop: '🌙'
   },
   {
     id: 4,
-    title: 'Tea Time Sprout',
-    icon: '🍵',
-    color: '#FDE68A',
-    bg: '#FFFBEB',
-    image: null,
-    svgTheme: 'tea'
+    title: 'Heart Eyes Loving Sprout',
+    icon: '😍',
+    bg: '#FFF1F2',
+    eyeType: 'hearts',
+    mouthType: 'bigSmile',
+    prop: '💖'
   },
   {
     id: 5,
-    title: 'Zen Meditation Sprout',
-    icon: '🧘',
-    color: '#BAE6FD',
-    bg: '#F0F9FF',
-    image: null,
-    svgTheme: 'zen'
+    title: 'Sparkle Star Sprout',
+    icon: '🤩',
+    bg: '#FEFCE8',
+    eyeType: 'stars',
+    mouthType: 'openJoy',
+    prop: '🌟'
   },
   {
     id: 6,
-    title: 'Rainy Day Sprout',
-    icon: '☔',
-    color: '#93C5FD',
-    bg: '#EFF6FF',
-    image: null,
-    svgTheme: 'rain'
+    title: 'Curious Cat Mouth Sprout',
+    icon: '😸',
+    bg: '#F0FDF4',
+    eyeType: 'round',
+    mouthType: 'cat3',
+    prop: '🍃'
   },
   {
     id: 7,
-    title: 'Star Gazer Sprout',
-    icon: '🌟',
-    color: '#DDD6FE',
-    bg: '#F5F3FF',
-    image: null,
-    svgTheme: 'star'
+    title: 'Cool Sunglasses Sprout',
+    icon: '😎',
+    bg: '#F0F9FF',
+    eyeType: 'sunglasses',
+    mouthType: 'smirk',
+    prop: '🕶️'
   },
   {
     id: 8,
-    title: 'Butterfly Friend Sprout',
-    icon: '🦋',
-    color: '#FBCFE8',
+    title: 'Cherry Blossom Sprout',
+    icon: '🌸',
     bg: '#FDF2F8',
-    image: null,
-    svgTheme: 'butterfly'
+    eyeType: 'blushing',
+    mouthType: 'bigSmile',
+    prop: '🌸'
   },
   {
     id: 9,
-    title: 'Sunny Day Sprout',
-    icon: '☀️',
-    color: '#FDE047',
-    bg: '#FEFCE8',
-    image: null,
-    svgTheme: 'sun'
+    title: 'Yummy Foodie Sprout',
+    icon: '😋',
+    bg: '#FFFBEB',
+    eyeType: 'happyArc',
+    mouthType: 'tongueSide',
+    prop: '🍓'
   },
   {
     id: 10,
-    title: 'Music Lover Sprout',
-    icon: '🎶',
-    color: '#C4B5FD',
-    bg: '#F5F3FF',
-    image: null,
-    svgTheme: 'music'
+    title: 'Zen Meditation Sprout',
+    icon: '🧘',
+    bg: '#ECFDF5',
+    eyeType: 'peaceful',
+    mouthType: 'calmLine',
+    prop: '🧘'
   },
   {
     id: 11,
-    title: 'Artist Sprout',
-    icon: '🎨',
-    color: '#FCA5A5',
-    bg: '#FEF2F2',
-    image: null,
-    svgTheme: 'artist'
+    title: 'Gamer Headphones Sprout',
+    icon: '🎧',
+    bg: '#F5F3FF',
+    eyeType: 'sparkle',
+    mouthType: 'openJoy',
+    prop: '🎧'
   },
   {
     id: 12,
-    title: 'Little Explorer Sprout',
-    icon: '🎒',
-    color: '#86EFAC',
-    bg: '#F0FDF4',
-    image: null,
-    svgTheme: 'explorer'
+    title: 'Surprised Wow Sprout',
+    icon: '😮',
+    bg: '#EFF6FF',
+    eyeType: 'bigRound',
+    mouthType: 'smallO',
+    prop: '❗'
   },
   {
     id: 13,
-    title: 'Sweet Cupcake Sprout',
-    icon: '🧁',
-    color: '#F472B6',
-    bg: '#FDF2F8',
-    image: null,
-    svgTheme: 'cupcake'
+    title: 'Rainbow Sparkle Sprout',
+    icon: '🌈',
+    bg: '#EEF2FF',
+    eyeType: 'sparkle',
+    mouthType: 'bigSmile',
+    prop: '🌈'
   },
   {
     id: 14,
-    title: 'Rainbow Dreams Sprout',
-    icon: '🌈',
-    color: '#A5B4FC',
-    bg: '#EEF2FF',
-    image: null,
-    svgTheme: 'rainbow'
+    title: 'Rainy Leaf Umbrella Sprout',
+    icon: '☔',
+    bg: '#F0F9FF',
+    eyeType: 'happyArc',
+    mouthType: 'bigSmile',
+    prop: '☔'
   },
   {
     id: 15,
-    title: 'Bedtime Sleepy Sprout',
-    icon: '🌙',
-    color: '#818CF8',
-    bg: '#EEF2FF',
-    image: null,
-    svgTheme: 'sleep'
+    title: 'Chef Cookie Sprout',
+    icon: '🧁',
+    bg: '#FFF1F2',
+    eyeType: 'winkingStar',
+    mouthType: 'tongue',
+    prop: '🍪'
   }
 ];
 
 /**
  * SproutBuddySlideshow Component
- * Smooth 15-picture cross-fading slideshow carousel of cute soothing sprout artworks.
+ * 100% Automatic Cross-Fading Carousel of 15 Ultra-Cute Doraemon/Chibi Round Cartoon Mascot Expressions.
  */
 export const SproutBuddySlideshow = () => {
   const { lowStimulation } = useSensory();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
 
-  // Auto slideshow transition timer (3 seconds)
+  // 100% Automatic slideshow loop (2.8 seconds)
   useEffect(() => {
-    if (lowStimulation || isPaused) return;
+    if (lowStimulation) return;
 
     const timer = setInterval(() => {
-      setCurrentIndex(prev => (prev + 1) % SPROUT_SLIDES.length);
-    }, 3200);
+      setCurrentIndex(prev => (prev + 1) % SPROUT_EXPRESSIONS.length);
+    }, 2800);
 
     return () => clearInterval(timer);
-  }, [lowStimulation, isPaused]);
+  }, [lowStimulation]);
 
-  const currentSlide = SPROUT_SLIDES[currentIndex];
-
-  const handlePrev = () => {
-    setCurrentIndex(prev => (prev === 0 ? SPROUT_SLIDES.length - 1 : prev - 1));
-  };
-
-  const handleNext = () => {
-    setCurrentIndex(prev => (prev + 1) % SPROUT_SLIDES.length);
-  };
+  const current = SPROUT_EXPRESSIONS[currentIndex];
 
   return (
     <div
-      className="flex flex-col items-center justify-center p-4 bg-white/80 border border-[#E5E0D3] rounded-3xl shadow-sm backdrop-blur-sm relative group w-64 sm:w-72 transition-all duration-300"
-      onMouseEnter={() => setIsPaused(true)}
-      onMouseLeave={() => setIsPaused(false)}
+      className="flex flex-col items-center justify-center p-4 bg-white/90 border border-[#E5E0D3] rounded-3xl shadow-sm backdrop-blur-sm relative w-64 sm:w-72 transition-all duration-300 overflow-hidden"
     >
-      {/* Slide Index Badge Counter */}
-      <div className="absolute top-3 left-3 text-[10px] font-bold text-[#5C5B99] bg-[#E8DFF5] px-2.5 py-0.5 rounded-full border border-[#DDD6FE]">
-        {currentIndex + 1} / {SPROUT_SLIDES.length}
+      {/* Top Expression Counter Badge */}
+      <div className="w-full flex items-center justify-between text-[11px] font-bold text-[#5C5B99] px-2 mb-1">
+        <span>🌱 Sprout Mascot</span>
+        <span className="bg-[#E8DFF5] px-2 py-0.5 rounded-full border border-[#DDD6FE]">
+          {currentIndex + 1} / 15
+        </span>
       </div>
 
-      {/* Manual Slide Controls */}
-      <button
-        onClick={handlePrev}
-        className="absolute left-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/90 text-[#1F2937] font-bold text-xs shadow-md border border-[#E5E0D3] hover:bg-[#EAE5D8] cursor-pointer opacity-80 group-hover:opacity-100 transition-opacity z-20 flex items-center justify-center"
-        title="Previous Sprout Picture"
+      {/* Main Chibi Round Cartoon Mascot Face Frame */}
+      <div
+        key={current.id}
+        className="w-48 h-48 sm:w-56 sm:h-56 rounded-3xl flex items-center justify-center relative p-3 animate-fadeIn transition-colors duration-500 shadow-inner border border-black/5"
+        style={{ backgroundColor: current.bg }}
       >
-        ‹
-      </button>
+        <svg viewBox="0 0 120 120" className="w-full h-full drop-shadow-md">
+          <defs>
+            <filter id="softGlow" x="-10%" y="-10%" width="120%" height="120%">
+              <feDropShadow dx="0" dy="3" stdDeviation="2" floodColor="#000000" floodOpacity="0.1" />
+            </filter>
+          </defs>
 
-      <button
-        onClick={handleNext}
-        className="absolute right-2 top-1/2 -translate-y-1/2 w-7 h-7 rounded-full bg-white/90 text-[#1F2937] font-bold text-xs shadow-md border border-[#E5E0D3] hover:bg-[#EAE5D8] cursor-pointer opacity-80 group-hover:opacity-100 transition-opacity z-20 flex items-center justify-center"
-        title="Next Sprout Picture"
-      >
-        ›
-      </button>
+          {/* Cute Round Doraemon/Chibi Mascot Face Base */}
+          <circle cx="60" cy="62" r="44" fill="#A5EBE0" stroke="#71C9B6" strokeWidth="3" filter="url(#softGlow)" />
+          {/* Inner Cream Face Belly Patch */}
+          <ellipse cx="60" cy="66" rx="36" ry="32" fill="#FFFBF5" />
 
-      {/* Main Image / Art Display Frame */}
-      <div className="w-44 h-44 sm:w-52 sm:h-52 relative flex items-center justify-center my-2 overflow-hidden rounded-2xl">
-        {currentSlide.image ? (
-          <img
-            src={currentSlide.image}
-            alt={currentSlide.title}
-            className="w-full h-full object-contain mix-blend-multiply drop-shadow-md animate-fadeIn"
-            key={currentSlide.id}
-          />
-        ) : (
-          /* Procedural Cute Chibi Vector Art for Slides 2-15 */
-          <div
-            key={currentSlide.id}
-            className="w-full h-full rounded-2xl flex flex-col items-center justify-center relative p-3 animate-fadeIn transition-colors duration-300"
-            style={{ backgroundColor: currentSlide.bg }}
-          >
-            <svg viewBox="0 0 100 100" className="w-32 h-32 drop-shadow-md">
-              {/* Sprout Head Base */}
-              <circle cx="50" cy="48" r="26" fill="#FCE5D0" />
+          {/* Sprout Hair Leaves on Top */}
+          <path d="M 52 18 Q 44 4 50 0 Q 58 6 52 18" fill="#78B955" stroke="#5F9E3D" strokeWidth="1.5" />
+          <path d="M 68 18 Q 76 4 70 0 Q 62 6 68 18" fill="#5F9E3D" stroke="#48782D" strokeWidth="1.5" />
 
-              {/* Green Sprout Hair */}
-              <circle cx="50" cy="38" r="24" fill="#A5EBE0" />
-              <path d="M 28 44 C 26 25, 42 22, 50 24 C 58 22, 74 25, 72 44 Z" fill="#71C9B6" />
+          {/* Rosy Pink Blush Cheeks */}
+          <ellipse cx="36" cy="68" rx="7" ry="4" fill="#FF8A80" opacity="0.6" />
+          <ellipse cx="84" cy="68" rx="7" ry="4" fill="#FF8A80" opacity="0.6" />
 
-              {/* Sprout Leaves on Head */}
-              <path d="M 44 20 Q 38 8 42 4 Q 48 12 44 20" fill="#78B955" />
-              <path d="M 56 20 Q 62 8 58 4 Q 52 12 56 20" fill="#5F9E3D" />
+          {/* EYES RENDERING (15 Unique Doraemon/Chibi Expression Types) */}
+          {current.eyeType === 'sparkle' && (
+            <>
+              <circle cx="44" cy="58" r="5.5" fill="#1F2937" />
+              <circle cx="46" cy="56" r="2" fill="#FFFFFF" />
+              <circle cx="76" cy="58" r="5.5" fill="#1F2937" />
+              <circle cx="78" cy="56" r="2" fill="#FFFFFF" />
+            </>
+          )}
 
-              {/* Eyes & Expressions */}
-              <circle cx="41" cy="46" r="3" fill="#1F2937" />
-              <circle cx="42" cy="44.5" r="1" fill="#FFFFFF" />
-              <circle cx="59" cy="46" r="3" fill="#1F2937" />
-              <circle cx="60" cy="44.5" r="1" fill="#FFFFFF" />
+          {current.eyeType === 'wink' && (
+            <>
+              <path d="M 38 58 Q 44 52 50 58" stroke="#1F2937" strokeWidth="3" fill="none" strokeLinecap="round" />
+              <circle cx="76" cy="58" r="5.5" fill="#1F2937" />
+              <circle cx="78" cy="56" r="2" fill="#FFFFFF" />
+            </>
+          )}
 
-              {/* Rosy Cheeks */}
-              <circle cx="35" cy="50" r="3.5" fill="#FF8A80" opacity="0.5" />
-              <circle cx="65" cy="50" r="3.5" fill="#FF8A80" opacity="0.5" />
+          {current.eyeType === 'sleepy' && (
+            <>
+              <path d="M 38 58 Q 44 64 50 58" stroke="#1F2937" strokeWidth="3" fill="none" strokeLinecap="round" />
+              <path d="M 70 58 Q 76 64 82 58" stroke="#1F2937" strokeWidth="3" fill="none" strokeLinecap="round" />
+              <text x="90" y="45" fontSize="12" fill="#5C5B99" fontWeight="bold">Zzz</text>
+            </>
+          )}
 
-              {/* Cute Smile */}
-              <path d="M 43 51 Q 50 57 57 51" stroke="#1F2937" strokeWidth="2" fill="none" strokeLinecap="round" />
+          {current.eyeType === 'hearts' && (
+            <>
+              <text x="36" y="62" fontSize="16">💖</text>
+              <text x="68" y="62" fontSize="16">💖</text>
+            </>
+          )}
 
-              {/* Sweater Body */}
-              <rect x="34" y="66" width="32" height="28" rx="8" fill="#E8DFF5" stroke="#DDD6FE" strokeWidth="1" />
+          {current.eyeType === 'stars' && (
+            <>
+              <text x="36" y="62" fontSize="16">🌟</text>
+              <text x="68" y="62" fontSize="16">🌟</text>
+            </>
+          )}
 
-              {/* Theme Props */}
-              {currentSlide.svgTheme === 'flower' && (
-                <text x="50" y="20" textAnchor="middle" fontSize="16">🌸</text>
-              )}
-              {currentSlide.svgTheme === 'reading' && (
-                <rect x="42" y="70" width="16" height="12" rx="2" fill="#3B82F6" />
-              )}
-              {currentSlide.svgTheme === 'tea' && (
-                <text x="50" y="76" textAnchor="middle" fontSize="12">🍵</text>
-              )}
-              {currentSlide.svgTheme === 'zen' && (
-                <text x="50" y="20" textAnchor="middle" fontSize="12">🧘</text>
-              )}
-              {currentSlide.svgTheme === 'rain' && (
-                <text x="50" y="16" textAnchor="middle" fontSize="16">☔</text>
-              )}
-              {currentSlide.svgTheme === 'star' && (
-                <text x="50" y="16" textAnchor="middle" fontSize="14">🌟</text>
-              )}
-              {currentSlide.svgTheme === 'butterfly' && (
-                <text x="50" y="16" textAnchor="middle" fontSize="14">🦋</text>
-              )}
-              {currentSlide.svgTheme === 'sun' && (
-                <text x="50" y="16" textAnchor="middle" fontSize="14">☀️</text>
-              )}
-              {currentSlide.svgTheme === 'music' && (
-                <text x="50" y="16" textAnchor="middle" fontSize="14">🎧</text>
-              )}
-              {currentSlide.svgTheme === 'artist' && (
-                <text x="50" y="16" textAnchor="middle" fontSize="14">🎨</text>
-              )}
-              {currentSlide.svgTheme === 'explorer' && (
-                <text x="50" y="16" textAnchor="middle" fontSize="14">🎒</text>
-              )}
-              {currentSlide.svgTheme === 'cupcake' && (
-                <text x="50" y="76" textAnchor="middle" fontSize="12">🧁</text>
-              )}
-              {currentSlide.svgTheme === 'rainbow' && (
-                <text x="50" y="16" textAnchor="middle" fontSize="14">🌈</text>
-              )}
-              {currentSlide.svgTheme === 'sleep' && (
-                <text x="50" y="16" textAnchor="middle" fontSize="14">🌙</text>
-              )}
-            </svg>
-          </div>
-        )}
+          {current.eyeType === 'round' && (
+            <>
+              <circle cx="44" cy="58" r="6" fill="#1F2937" />
+              <circle cx="46" cy="56" r="2.5" fill="#FFFFFF" />
+              <circle cx="76" cy="58" r="6" fill="#1F2937" />
+              <circle cx="78" cy="56" r="2.5" fill="#FFFFFF" />
+            </>
+          )}
+
+          {current.eyeType === 'sunglasses' && (
+            <>
+              <rect x="34" y="52" width="52" height="14" rx="4" fill="#1F2937" />
+              <line x1="36" y1="54" x2="48" y2="64" stroke="#6B7280" strokeWidth="1.5" />
+              <line x1="70" y1="54" x2="82" y2="64" stroke="#6B7280" strokeWidth="1.5" />
+            </>
+          )}
+
+          {current.eyeType === 'blushing' && (
+            <>
+              <path d="M 38 56 Q 44 51 50 56" stroke="#1F2937" strokeWidth="3" fill="none" strokeLinecap="round" />
+              <path d="M 70 56 Q 76 51 82 56" stroke="#1F2937" strokeWidth="3" fill="none" strokeLinecap="round" />
+            </>
+          )}
+
+          {current.eyeType === 'happyArc' && (
+            <>
+              <path d="M 38 58 Q 44 50 50 58" stroke="#1F2937" strokeWidth="3" fill="none" strokeLinecap="round" />
+              <path d="M 70 58 Q 76 50 82 58" stroke="#1F2937" strokeWidth="3" fill="none" strokeLinecap="round" />
+            </>
+          )}
+
+          {current.eyeType === 'peaceful' && (
+            <>
+              <path d="M 38 58 Q 44 62 50 58" stroke="#1F2937" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+              <path d="M 70 58 Q 76 62 82 58" stroke="#1F2937" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+            </>
+          )}
+
+          {current.eyeType === 'bigRound' && (
+            <>
+              <circle cx="44" cy="56" r="7" fill="#1F2937" />
+              <circle cx="46" cy="54" r="3" fill="#FFFFFF" />
+              <circle cx="76" cy="56" r="7" fill="#1F2937" />
+              <circle cx="78" cy="54" r="3" fill="#FFFFFF" />
+            </>
+          )}
+
+          {current.eyeType === 'winkingStar' && (
+            <>
+              <text x="36" y="62" fontSize="14">⭐</text>
+              <circle cx="76" cy="58" r="5.5" fill="#1F2937" />
+              <circle cx="78" cy="56" r="2" fill="#FFFFFF" />
+            </>
+          )}
+
+          {/* MOUTH RENDERING */}
+          {current.mouthType === 'bigSmile' && (
+            <path d="M 48 68 Q 60 82 72 68 Z" fill="#E57373" stroke="#1F2937" strokeWidth="2" />
+          )}
+
+          {current.mouthType === 'tongue' && (
+            <g>
+              <path d="M 48 68 Q 60 82 72 68 Z" fill="#1F2937" />
+              <path d="M 52 74 Q 60 82 68 74" fill="#FF8A80" />
+            </g>
+          )}
+
+          {current.mouthType === 'openJoy' && (
+            <path d="M 48 66 Q 60 84 72 66 Z" fill="#1F2937" />
+          )}
+
+          {current.mouthType === 'cat3' && (
+            <path d="M 48 68 Q 54 74 60 68 Q 66 74 72 68" stroke="#1F2937" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+          )}
+
+          {current.mouthType === 'smirk' && (
+            <path d="M 54 70 Q 66 74 72 66" stroke="#1F2937" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+          )}
+
+          {current.mouthType === 'smallO' && (
+            <ellipse cx="60" cy="72" rx="5" ry="6" fill="#1F2937" />
+          )}
+
+          {current.mouthType === 'smallSmile' && (
+            <path d="M 50 70 Q 60 76 70 70" stroke="#1F2937" strokeWidth="2.5" fill="none" strokeLinecap="round" />
+          )}
+
+          {current.mouthType === 'tongueSide' && (
+            <g>
+              <path d="M 50 68 Q 60 78 70 68" stroke="#1F2937" strokeWidth="2.5" fill="none" />
+              <circle cx="64" cy="74" r="3" fill="#FF8A80" />
+            </g>
+          )}
+
+          {current.mouthType === 'calmLine' && (
+            <path d="M 52 70 Q 60 74 68 70" stroke="#1F2937" strokeWidth="2" fill="none" strokeLinecap="round" />
+          )}
+
+          {/* Special Prop Accents */}
+          {current.prop && (
+            <text x="60" y="104" textAnchor="middle" fontSize="18">
+              {current.prop}
+            </text>
+          )}
+        </svg>
       </div>
 
       {/* Floating Theme Title Badge */}
-      <span className="mt-1 text-[11px] font-bold text-[#5C5B99] px-3.5 py-1 bg-[#E8DFF5] rounded-full border border-[#DDD6FE] flex items-center gap-1.5 shadow-sm">
-        <span>{currentSlide.icon}</span>
-        <span>{currentSlide.title}</span>
+      <span className="mt-2 text-[11px] font-bold text-[#5C5B99] px-3.5 py-1 bg-[#E8DFF5] rounded-full border border-[#DDD6FE] flex items-center gap-1.5 shadow-sm">
+        <span>{current.icon}</span>
+        <span>{current.title}</span>
       </span>
-
-      {/* 15 Slide Indicator Dots */}
-      <div className="flex items-center justify-center gap-1 mt-2.5">
-        {SPROUT_SLIDES.map((slide, idx) => (
-          <button
-            key={slide.id}
-            onClick={() => setCurrentIndex(idx)}
-            className={`w-1.5 h-1.5 rounded-full transition-all cursor-pointer ${
-              currentIndex === idx
-                ? 'w-4 bg-[#5C5B99]'
-                : 'bg-[#CBD5E1] hover:bg-[#94A3B8]'
-            }`}
-            title={`Go to slide ${idx + 1}: ${slide.title}`}
-          />
-        ))}
-      </div>
     </div>
   );
 };
