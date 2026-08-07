@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://mindmirror-ai-nej8.onrender.com/api/:path*"
+    }
+  ]
+}
