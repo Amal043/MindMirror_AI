@@ -9,6 +9,43 @@ export const SensoryProvider = ({ children }) => {
   const [fontSizePx, setFontSizePx] = useState(16);
   const [voiceGender, setVoiceGender] = useState('female'); // 'female' or 'male'
 
+  // User Auth State (MongoDB Atlas Cloud Integration)
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(() => localStorage.getItem('mindmirror_token') || null);
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+
+  const openAuthModal = () => setIsAuthModalOpen(true);
+  const closeAuthModal = () => setIsAuthModalOpen(false);
+
+  const loginUser = (userData, authToken) => {
+    setUser(userData);
+    setToken(authToken);
+    if (authToken) {
+      localStorage.setItem('mindmirror_token', authToken);
+    }
+  };
+
+  const logoutUser = () => {
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem('mindmirror_token');
+  };
+
+  // Auto-verify token with backend on mount
+  useEffect(() => {
+    const savedToken = localStorage.getItem('mindmirror_token');
+    if (savedToken) {
+      fetch('/api/auth/me', {
+        headers: { Authorization: `Bearer ${savedToken}` }
+      })
+        .then(res => res.json())
+        .then(data => {
+          if (data.user) setUser(data.user);
+        })
+        .catch(err => console.warn('Auth token check failed:', err));
+    }
+  }, []);
+
   const toggleVoiceGender = () => setVoiceGender(prev => prev === 'female' ? 'male' : 'female');
 
   const [currentRoute, setCurrentRoute] = useState('home');
@@ -413,10 +450,16 @@ export const SensoryProvider = ({ children }) => {
         isSpeakingTTS,
         voiceGender,
         setVoiceGender,
-        toggleVoiceGender,
         startDictation,
         isDictating,
-        dictationTranscript
+        dictationTranscript,
+        user,
+        token,
+        isAuthModalOpen,
+        openAuthModal,
+        closeAuthModal,
+        loginUser,
+        logoutUser
       }}
     >
       {children}

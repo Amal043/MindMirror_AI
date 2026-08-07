@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useSensory } from '../context/SensoryContext';
 import { AmbientSoundWidget } from './AmbientSoundWidget';
+import { AuthModal } from './AuthModal';
 
 export const Header = () => {
   const {
@@ -14,7 +15,12 @@ export const Header = () => {
     toggleReadingEase,
     speakText,
     voiceGender,
-    toggleVoiceGender
+    toggleVoiceGender,
+    user,
+    logoutUser,
+    isAuthModalOpen,
+    openAuthModal,
+    closeAuthModal
   } = useSensory();
 
   const [isToolbarOpen, setIsToolbarOpen] = useState(false);
@@ -121,6 +127,29 @@ export const Header = () => {
 
       {/* Floating Secondary Accessibility Bar & Popover Bar (Matching Reference Image) */}
       <div className="max-w-6xl mx-auto flex items-center justify-end gap-2 pt-2 text-xs">
+        
+        {/* User Account Login / Profile Badge (MongoDB Atlas Cloud Integration) */}
+        {user ? (
+          <div className="flex items-center gap-1.5 px-3 py-1 bg-[#EEF2FF] border border-[#C7D2FE] rounded-full font-bold text-[#5C5B99]">
+            <span>{user.avatar || '🌸'}</span>
+            <span className="max-w-[100px] truncate">{user.name}</span>
+            <button
+              onClick={logoutUser}
+              className="ml-1 text-[10px] text-gray-500 hover:text-red-600 underline cursor-pointer"
+              title="Log Out"
+            >
+              Logout
+            </button>
+          </div>
+        ) : (
+          <button
+            onClick={openAuthModal}
+            className="px-3.5 py-1 bg-[#5C5B99] hover:bg-[#494787] text-white rounded-full font-bold transition-all cursor-pointer flex items-center gap-1 shadow-sm btn-press"
+          >
+            <span>🔐</span> Log In / Sign Up
+          </button>
+        )}
+
         <button
           onClick={() => navigateTo('progress')}
           className="px-3 py-1 bg-[#FCE4EB] text-[#B83280] border border-[#F9C5D5] hover:bg-[#F9C5D5] rounded-full font-semibold transition-all cursor-pointer flex items-center gap-1"
@@ -167,6 +196,10 @@ export const Header = () => {
           </div>
         )}
       </div>
+
+      {/* Login & Signup Modal */}
+      <AuthModal isOpen={isAuthModalOpen} onClose={closeAuthModal} />
+
     </header>
   );
 };

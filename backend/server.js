@@ -3,6 +3,9 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { startPersonaSession, sendPersonaMessage, getSession } from './services/llm/personaEngine.js';
 
+import mongoose from 'mongoose';
+import authRoutes from './routes/auth.js';
+
 dotenv.config();
 
 const app = express();
@@ -10,6 +13,16 @@ const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
+
+// Connect to MongoDB Atlas
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb+srv://amalsrivastava1200_db_user:PsQc4UOGL9BRYTdc@mindmirrorai.5hzdl3d.mongodb.net/mindmirror?retryWrites=true&w=majority&appName=MindMirrorAI';
+
+mongoose.connect(MONGODB_URI)
+  .then(() => console.log('[MongoDB Atlas] Connected successfully to MongoDB Cloud Database! 🍃'))
+  .catch((err) => console.error('[MongoDB Atlas Error] Connection failed:', err.message));
+
+// Mount Authentication Routes
+app.use('/api/auth', authRoutes);
 
 /**
  * POST /api/scenario/start
